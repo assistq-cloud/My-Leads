@@ -162,12 +162,33 @@ updateAmountDisplay();
 
 payBtn.addEventListener("click", () => {
   const amt = currentAmount();
-  if (amt <= 0) return;
-  const note = encodeURIComponent("AssistQ - " + packageSelect.selectedOptions[0].text.split(" — ")[0]);
-  const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${amt}&cu=INR&tn=${note}`;
+  if (amt <= 0) {
+    alert("Please select a paid package");
+    return;
+  }
+
+  // Extract package name
+  const pkgText = packageSelect.selectedOptions[0].text;
+  const pkgName = pkgText.split(" — ")[0];
+  
+  // Build UPI URL
+  const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${amt}&cu=INR&tn=${encodeURIComponent(pkgName)}`;
+  
+  console.log("UPI URL:", upiUrl); // For debugging
+  
   window.location.href = upiUrl;
 });
+// ===== OPTIONAL: FALLBACK HANDLER =====
+// This shows a message if UPI app doesn't open after 1.5 seconds
+const upiLinkTimeout = setTimeout(() => {
+  console.warn("UPI app may not be installed or accessible");
+}, 1500);
 
+// Clear timeout if user clicks pay button
+payBtn.addEventListener("click", () => {
+  clearTimeout(upiLinkTimeout);
+});
+// =====================================
 copyUpiBtn.addEventListener("click", () => {
   navigator.clipboard.writeText(UPI_ID).then(() => {
     copyUpiBtn.textContent = "Copied!";

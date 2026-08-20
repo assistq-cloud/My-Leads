@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AssistQ — Complete Your Payment</title>
+<style>
+  :root {
+    --ink: #eceef2;
+    --inkMuted: #8b90a3;
+    --accent: #e2703a;
+    --accentSoft: rgba(226,112,58,0.14);
+    --bg: #0a0c11;
+    --card: #141821;
+    --border: #262b38;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: var(--bg); color: var(--ink);
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    padding: 30px 16px;
+  }
+  .wrap { max-width: 460px; width: 100%; }
+  .brand { text-align: center; font-weight: 800; font-size: 18px; margin-bottom: 4px; }
+  .brand span { color: var(--accent); }
+  .subhead { text-align: center; color: var(--inkMuted); font-size: 13.5px; margin-bottom: 28px; }
+
+  .card {
+    background: var(--card); border: 1px solid var(--border); border-radius: 18px;
+    padding: 26px; margin-bottom: 18px;
+  }
+  .card h2 { font-size: 15px; margin-bottom: 16px; }
+
+  select, input {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--border); background: #0d1017; color: var(--ink);
+    font-size: 14px; margin-bottom: 14px; outline: none;
+  }
+  select:focus, input:focus { border-color: var(--accent); }
+  label { font-size: 12.5px; color: var(--inkMuted); display: block; margin-bottom: 6px; }
+
+  .amountDisplay {
+    text-align: center; padding: 18px; background: var(--accentSoft);
+    border-radius: 12px; margin-bottom: 18px;
+  }
+  .amountDisplay .amt { font-size: 30px; font-weight: 800; color: var(--accent); }
+  .amountDisplay .label { font-size: 12px; color: var(--inkMuted); margin-top: 2px; }
+
+  .payBtn {
+    width: 100%; background: var(--accent); color: white; border: none;
+    padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 700;
+    cursor: pointer; margin-bottom: 10px;
+  }
+  .payBtn:hover { background: #ee7d43; }
+
+  .upiIdRow {
+    display: flex; justify-content: space-between; align-items: center;
+    background: #0d1017; border: 1px solid var(--border); border-radius: 10px;
+    padding: 12px 14px; font-size: 13.5px; margin-bottom: 4px;
+  }
+  .upiIdRow button {
+    background: none; border: 1px solid var(--accent); color: var(--accent);
+    padding: 5px 12px; border-radius: 8px; font-size: 12px; cursor: pointer;
+  }
+
+  .confirmBtn {
+    width: 100%; background: var(--card); border: 1.5px solid var(--accent);
+    color: var(--accent); padding: 13px; border-radius: 12px; font-size: 14px;
+    font-weight: 600; cursor: pointer; margin-top: 8px;
+  }
+  .confirmBtn:hover { background: var(--accentSoft); }
+  .confirmBtn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .status { font-size: 13px; text-align: center; margin-top: 12px; display: none; }
+  .status.success { color: #7fd99a; }
+  .status.error { color: #ff9a8f; }
+
+  .note { font-size: 12px; color: var(--inkMuted); text-align: center; line-height: 1.6; }
+  .hidden { display: none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="brand">Assist<span>Q</span></div>
+  <div class="subhead">Complete your setup payment to get started</div>
+
+  <div class="card">
+    <h2>1. Select Your Package</h2>
+    <label>Package</label>
+    <select id="packageSelect">
+      <option value="audit" data-amount="0">Digital / SEO Audit — Free</option>
+      <option value="smartform" data-amount="1999">Smart Form — ₹1,999 setup</option>
+      <option value="chatbot" data-amount="4999">AI Chatbot — ₹4,999 setup</option>
+      <option value="seo" data-amount="2999">SEO Growth — ₹2,999 setup</option>
+      <option value="bundle" data-amount="5999">AI Chatbot + SEO Growth (Bundle) — ₹5,999 setup</option>
+    </select>
+
+    <div class="amountDisplay">
+      <div class="amt" id="amountText">₹0</div>
+      <div class="label">Setup fee due today</div>
+    </div>
+  </div>
+
+  <div class="card" id="paymentCard">
+    <h2>2. Pay via UPI</h2>
+    <button class="payBtn" id="payBtn">Pay Now with UPI App</button>
+    <div class="note" style="margin-bottom: 14px;">Opens GPay, PhonePe, Paytm, or any UPI app with the amount pre-filled.</div>
+
+    <label>Or pay manually to this UPI ID</label>
+    <div class="upiIdRow">
+      <span id="upiIdText">yourupi@bank</span>
+      <button id="copyUpiBtn">Copy</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>3. Confirm Your Payment</h2>
+    <label>Your Name</label>
+    <input id="nameInput" type="text" placeholder="Full name" />
+    <label>Phone or Email</label>
+    <input id="contactInput" type="text" placeholder="Phone or email" />
+    <label>UPI Transaction / Reference ID</label>
+    <input id="txnInput" type="text" placeholder="Found in your payment app's confirmation" />
+    <button class="confirmBtn" id="confirmBtn">I've Made the Payment</button>
+    <div class="status" id="statusMsg"></div>
+  </div>
+
+  <div class="note">Once confirmed, we'll verify and reach out within a few hours to get your setup started.</div>
+</div>
+
+<script>
+// ============ CONFIG ============
+const UPI_ID = "urveshsontakke@oksbi";       // your real UPI ID
+const PAYEE_NAME = "AssistQ";         // shows in the payer's UPI app
+const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyoHC4BTPpJNAQJWE8LJKq00vi7OGtJwRAXzPK8nWlhku-BsSJRCU6EIIxyzTwe4rrUqQ/exec"; // must end in /exec
+// ==================================
+
+const packageSelect = document.getElementById("packageSelect");
+const amountText = document.getElementById("amountText");
+const upiIdText = document.getElementById("upiIdText");
+const payBtn = document.getElementById("payBtn");
+const copyUpiBtn = document.getElementById("copyUpiBtn");
+const confirmBtn = document.getElementById("confirmBtn");
+const statusMsg = document.getElementById("statusMsg");
+const paymentCard = document.getElementById("paymentCard");
+
+upiIdText.textContent = UPI_ID;
+
+function currentAmount() {
+  return Number(packageSelect.selectedOptions[0].dataset.amount);
+}
+
+function updateAmountDisplay() {
+  const amt = currentAmount();
+  amountText.textContent = "₹" + amt.toLocaleString("en-IN");
+  paymentCard.classList.toggle("hidden", amt === 0);
+}
+packageSelect.addEventListener("change", updateAmountDisplay);
+updateAmountDisplay();
+
+payBtn.addEventListener("click", () => {
+  const amt = currentAmount();
+  if (amt <= 0) return;
+  const note = encodeURIComponent("AssistQ - " + packageSelect.selectedOptions[0].text.split(" — ")[0]);
+  const upiUrl = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${amt}&cu=INR&tn=${note}`;
+  window.location.href = upiUrl;
+});
+
+copyUpiBtn.addEventListener("click", () => {
+  navigator.clipboard.writeText(UPI_ID).then(() => {
+    copyUpiBtn.textContent = "Copied!";
+    setTimeout(() => copyUpiBtn.textContent = "Copy", 1500);
+  });
+});
+
+confirmBtn.addEventListener("click", async () => {
+  const name = document.getElementById("nameInput").value.trim();
+  const contact = document.getElementById("contactInput").value.trim();
+  const txn = document.getElementById("txnInput").value.trim();
+  const pkg = packageSelect.selectedOptions[0].text;
+  const amt = currentAmount();
+
+  if (!name || !contact) {
+    showStatus("Please fill in your name and contact info.", "error");
+    return;
+  }
+
+  confirmBtn.disabled = true;
+  showStatus("Submitting...", "");
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: "POST",
+      body: JSON.stringify({
+        action: "payment_confirm",
+        fields: { name: name, contact: contact, package: pkg, amount: amt, transaction_ref: txn || "(not provided)" }
+      })
+    });
+    const rawText = await res.text();
+    let data;
+    try { data = JSON.parse(rawText); } catch (e) { data = null; }
+
+    if (!data || data.status !== "success") {
+      showStatus("Something went wrong: " + (data ? data.message : rawText.slice(0, 200)), "error");
+    } else {
+      showStatus("✅ Thanks! We've received your confirmation and will follow up shortly.", "success");
+    }
+  } catch (err) {
+    showStatus("Request failed: " + err.message, "error");
+  }
+
+  confirmBtn.disabled = false;
+});
+
+function showStatus(text, type) {
+  statusMsg.textContent = text;
+  statusMsg.className = "status " + type;
+  statusMsg.style.display = "block";
+}
+</script>
+
+</body>
+</html>

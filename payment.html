@@ -3,243 +3,255 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AssistQ — Complete Your Payment</title>
+<title>AssistQ — Subscribe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<!-- Razorpay checkout script. Swap for your gateway's SDK if you choose a different provider. -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
   :root {
-    --ink: #eceef2;
-    --inkMuted: #8b90a3;
-    --accent: #e2703a;
-    --accentSoft: rgba(226,112,58,0.14);
-    --bg: #0a0c11;
-    --card: #141821;
-    --border: #262b38;
+    --bg: #06070a; --bgElevated: #0b0d12; --card: rgba(255,255,255,0.035);
+    --cardBorder: rgba(255,255,255,0.08); --ink: #f2efe7; --inkMuted: #8d8f9c; --inkFaint: #5c5e6b;
+    --gold: #cba468; --goldBright: #e8cd94; --goldSoft: rgba(203,164,104,0.14); --border: rgba(203,164,104,0.22);
+    --dark: #030407; --glow: 203,164,104;
+    --serif: "Fraunces", Georgia, serif; --sans: "Manrope", -apple-system, sans-serif; --mono: "IBM Plex Mono", monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
-    background: var(--bg); color: var(--ink);
-    min-height: 100vh; display: flex; align-items: center; justify-content: center;
-    padding: 30px 16px;
-  }
-  .wrap { max-width: 460px; width: 100%; }
-  .brand { text-align: center; font-weight: 800; font-size: 18px; margin-bottom: 4px; }
-  .brand span { color: var(--accent); }
-  .subhead { text-align: center; color: var(--inkMuted); font-size: 13.5px; margin-bottom: 28px; }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-height: 100vh; }
+  a { color: var(--gold); text-decoration: none; }
+  nav { padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid var(--cardBorder); }
+  .navBrand { font-family: var(--serif); font-weight:600; font-size:20px; }
+  .navBrand span { color: var(--gold); }
+  .backLink { font-family: var(--mono); font-size: 12.5px; color: var(--inkMuted); }
+  .backLink:hover { color: var(--gold); }
 
-  .card {
-    background: var(--card); border: 1px solid var(--border); border-radius: 18px;
-    padding: 26px; margin-bottom: 18px;
-  }
-  .card h2 { font-size: 15px; margin-bottom: 16px; }
+  .wrap { max-width: 980px; margin: 0 auto; padding: 60px 32px 100px; display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items:start; }
+  @media (max-width: 840px) { .wrap { grid-template-columns: 1fr; } }
 
-  select, input {
-    width: 100%; padding: 12px 14px; border-radius: 10px;
-    border: 1px solid var(--border); background: #0d1017; color: var(--ink);
-    font-size: 14px; margin-bottom: 14px; outline: none;
-  }
-  select:focus, input:focus { border-color: var(--accent); }
-  label { font-size: 12.5px; color: var(--inkMuted); display: block; margin-bottom: 6px; }
+  .eyebrow { font-family: var(--mono); font-size: 11.5px; color: var(--gold); text-transform:uppercase; letter-spacing:1.4px; margin-bottom:14px; }
+  h1 { font-family: var(--serif); font-weight:600; font-size: 32px; letter-spacing:-0.6px; margin-bottom: 10px; }
+  .subCopy { color: var(--inkMuted); font-size: 14.5px; margin-bottom: 34px; max-width: 460px; }
 
-  .amountDisplay {
-    text-align: center; padding: 18px; background: var(--accentSoft);
-    border-radius: 12px; margin-bottom: 18px;
+  .planGrid { display:flex; gap: 14px; margin-bottom: 30px; flex-wrap: wrap; }
+  .planOption {
+    flex:1; min-width: 200px; background: var(--card); border: 1px solid var(--cardBorder); border-radius: 16px;
+    padding: 20px; cursor:pointer; transition: border-color .2s ease, background .2s ease;
   }
-  .amountDisplay .amt { font-size: 30px; font-weight: 800; color: var(--accent); }
-  .amountDisplay .label { font-size: 12px; color: var(--inkMuted); margin-top: 2px; }
+  .planOption.selected { border-color: var(--border); background: linear-gradient(180deg, rgba(203,164,104,0.1), rgba(203,164,104,0.02)); }
+  .planOption .pName { font-family: var(--serif); font-weight:600; font-size:16px; margin-bottom:6px; }
+  .planOption .pPrice { font-family: var(--serif); font-size: 22px; color: var(--goldBright); margin-bottom: 2px; }
+  .planOption .pNote { font-size: 11.5px; color: var(--inkFaint); }
+
+  .billingToggle { display:flex; align-items:center; gap:12px; margin-bottom: 34px; }
+  .billingToggle span { font-size: 13px; color: var(--inkMuted); }
+  .billingToggle span.on { color: var(--ink); }
+  .switch { width: 44px; height: 24px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 1px solid var(--cardBorder); position:relative; cursor:pointer; }
+  .switch.active { background: var(--goldSoft); border-color: var(--border); }
+  .switch i { position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background: var(--inkFaint); transition: left .2s ease, background .2s ease; }
+  .switch.active i { left: 22px; background: var(--goldBright); }
+  .saveTag { font-family: var(--mono); font-size: 10.5px; color: #1c1408; background: linear-gradient(135deg,var(--goldBright),var(--gold)); padding: 3px 9px; border-radius: 8px; }
+
+  .formCard { background: var(--card); border: 1px solid var(--cardBorder); border-radius: 18px; padding: 26px; }
+  .formCard label { display:block; font-size: 12.5px; color: var(--inkMuted); margin-bottom: 6px; margin-top: 16px; }
+  .formCard label:first-child { margin-top: 0; }
+  .formCard input {
+    width: 100%; background: rgba(255,255,255,0.04); border: 1px solid var(--cardBorder); border-radius: 10px;
+    padding: 12px 14px; color: var(--ink); font-size: 14px; outline: none;
+  }
+  .formCard input:focus { border-color: var(--border); }
 
   .payBtn {
-    width: 100%; background: var(--accent); color: white; border: none;
-    padding: 15px; border-radius: 12px; font-size: 15px; font-weight: 700;
-    cursor: pointer; margin-bottom: 10px;
+    width: 100%; margin-top: 26px; background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #150f04;
+    border: none; padding: 16px; border-radius: 30px; font-size: 14.5px; font-weight: 700; cursor: pointer;
+    box-shadow: 0 12px 30px rgba(var(--glow),0.3);
   }
-  .payBtn:hover { background: #ee7d43; }
+  .payBtn:hover { transform: translateY(-1px); }
+  .trustNote { text-align:center; font-size: 11.5px; color: var(--inkFaint); margin-top: 14px; font-family: var(--mono); }
 
-  .upiIdRow {
-    display: flex; justify-content: space-between; align-items: center;
-    background: #0d1017; border: 1px solid var(--border); border-radius: 10px;
-    padding: 12px 14px; font-size: 13.5px; margin-bottom: 4px;
-  }
-  .upiIdRow button {
-    background: none; border: 1px solid var(--accent); color: var(--accent);
-    padding: 5px 12px; border-radius: 8px; font-size: 12px; cursor: pointer;
-  }
-
-  .confirmBtn {
-    width: 100%; background: var(--card); border: 1.5px solid var(--accent);
-    color: var(--accent); padding: 13px; border-radius: 12px; font-size: 14px;
-    font-weight: 600; cursor: pointer; margin-top: 8px;
-  }
-  .confirmBtn:hover { background: var(--accentSoft); }
-  .confirmBtn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-  .status { font-size: 13px; text-align: center; margin-top: 12px; display: none; }
-  .status.success { color: #7fd99a; }
-  .status.error { color: #ff9a8f; }
-
-  .note { font-size: 12px; color: var(--inkMuted); text-align: center; line-height: 1.6; }
-  .hidden { display: none; }
+  /* ---- summary ---- */
+  .summaryCard { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); border: 1px solid var(--cardBorder); border-radius: 20px; padding: 28px; position: sticky; top: 30px; }
+  .summaryCard h3 { font-family: var(--serif); font-size: 17px; margin-bottom: 18px; }
+  .sumRow { display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13.5px; color: var(--inkMuted); }
+  .sumRow.total { border-bottom:none; padding-top: 16px; font-size: 16px; color: var(--ink); font-family: var(--serif); }
+  .sumRow.total b { color: var(--goldBright); }
+  .includedList { margin-top: 22px; list-style:none; }
+  .includedList li { font-size: 12.5px; color: var(--inkMuted); padding: 6px 0; }
+  .includedList li::before { content:"✓  "; color: var(--gold); }
+  .badgeRow { display:flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .badgeRow span { font-family: var(--mono); font-size: 10px; color: var(--inkFaint); border: 1px solid var(--cardBorder); padding: 5px 10px; border-radius: 8px; }
 </style>
 </head>
 <body>
 
+<nav>
+  <div class="navBrand">Assist<span>Q</span></div>
+  <a class="backLink" href="index.html">← Back to site</a>
+</nav>
+
 <div class="wrap">
-  <div class="brand">Assist<span>Q</span></div>
-  <div class="subhead">Complete your setup payment to get started</div>
+  <div>
+    <div class="eyebrow">Subscribe</div>
+    <h1>Start your AssistQ subscription</h1>
+    <p class="subCopy">Choose your plan, pick monthly or annual billing, and pay securely. Your setup fee is charged once; the plan then renews automatically until you cancel.</p>
 
-  <div class="card">
-    <h2>1. Select Your Package</h2>
-    <label>Package</label>
-    <select id="packageSelect">
-      <option value="audit" data-amount="0">Digital / SEO Audit — Free</option>
-      <option value="smartform" data-amount="1999">Smart Form — ₹1,999 setup</option>
-      <option value="chatbot" data-amount="4999">AI Chatbot — ₹4,999 setup</option>
-      <option value="seo" data-amount="2999">SEO Growth — ₹2,999 setup</option>
-      <option value="bundle" data-amount="5999">AI Chatbot + SEO Growth (Bundle) — ₹5,999 setup</option>
-    </select>
+    <div class="planGrid" id="planGrid">
+      <div class="planOption" data-plan="starter" data-setup="1999" data-monthly="2999" data-yearly="29990">
+        <div class="pName">Smart Form</div>
+        <div class="pPrice">₹2,999<span style="font-size:12px;color:var(--inkFaint);">/mo</span></div>
+        <div class="pNote">+ ₹1,999 one-time setup</div>
+      </div>
+      <div class="planOption selected" data-plan="suite" data-setup="5999" data-monthly="7999" data-yearly="79990">
+        <div class="pName">AI Chatbot Suite</div>
+        <div class="pPrice">₹7,999<span style="font-size:12px;color:var(--inkFaint);">/mo</span></div>
+        <div class="pNote">+ ₹5,999 one-time setup · includes SEO &amp; dashboard</div>
+      </div>
+    </div>
 
-    <div class="amountDisplay">
-      <div class="amt" id="amountText">₹0</div>
-      <div class="label">Setup fee due today</div>
+    <div class="billingToggle">
+      <span class="on" id="lblMonthly">Monthly</span>
+      <div class="switch" id="billingSwitch"><i></i></div>
+      <span id="lblYearly">Annual</span>
+      <span class="saveTag">Save ~17% annually</span>
+    </div>
+
+    <div class="formCard">
+      <label for="fullName">Full name</label>
+      <input id="fullName" type="text" placeholder="Your name" />
+      <label for="businessName">Business name</label>
+      <input id="businessName" type="text" placeholder="Your business" />
+      <label for="email">Email</label>
+      <input id="email" type="email" placeholder="you@business.com" />
+      <label for="phone">Phone (WhatsApp)</label>
+      <input id="phone" type="tel" placeholder="+91 " />
+      <button class="payBtn" id="payBtn">Pay setup fee &amp; start subscription</button>
+      <div class="trustNote">🔒 Payments processed securely via Razorpay · Cancel anytime</div>
     </div>
   </div>
 
-  <div class="card" id="paymentCard">
-    <h2>2. Pay via UPI</h2>
-    <button class="payBtn" id="payBtn">Pay Now with UPI App</button>
-    <div class="note" style="margin-bottom: 14px;">Opens GPay, PhonePe, Paytm, or any UPI app with the amount pre-filled.</div>
-
-    <label>Or pay manually to this UPI ID</label>
-    <div class="upiIdRow">
-      <span id="upiIdText">yourupi@bank</span>
-      <button id="copyUpiBtn">Copy</button>
-    </div>
+  <div class="summaryCard">
+    <h3>Order summary</h3>
+    <div class="sumRow"><span>Plan</span><span id="sumPlan">AI Chatbot Suite</span></div>
+    <div class="sumRow"><span>Setup fee (one-time)</span><span id="sumSetup">₹5,999</span></div>
+    <div class="sumRow"><span>Subscription</span><span id="sumRecurring">₹7,999/mo</span></div>
+    <div class="sumRow total"><span>Due today</span><b id="sumTotal">₹5,999</b></div>
+    <ul class="includedList" id="includedList">
+      <li>Full conversational AI qualification</li>
+      <li>Lead scoring — Hot / Warm / Cold</li>
+      <li>SEO growth included, no separate plan</li>
+      <li>Your dashboard — keywords, audits, UTM, config</li>
+      <li>Weekly performance report</li>
+    </ul>
+    <div class="badgeRow"><span>15-DAY TRIAL</span><span>NO LOCK-IN</span><span>FOUNDING RATE</span></div>
   </div>
-
-  <div class="card">
-    <h2>3. Confirm Your Payment</h2>
-    <label>Your Name</label>
-    <input id="nameInput" type="text" placeholder="Full name" />
-    <label>Phone or Email</label>
-    <input id="contactInput" type="text" placeholder="Phone or email" />
-    <label>UPI Transaction / Reference ID</label>
-    <input id="txnInput" type="text" placeholder="Found in your payment app's confirmation" />
-    <button class="confirmBtn" id="confirmBtn">I've Made the Payment</button>
-    <div class="status" id="statusMsg"></div>
-  </div>
-
-  <div class="note">Once confirmed, we'll verify and reach out within a few hours to get your setup started.</div>
 </div>
 
 <script>
-// ============ CONFIG ============
-const UPI_ID = "urveshsontakke@oksbi";       // your real UPI ID
-const PAYEE_NAME = "AssistQ";         // shows in the payer's UPI app
-const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbyoHC4BTPpJNAQJWE8LJKq00vi7OGtJwRAXzPK8nWlhku-BsSJRCU6EIIxyzTwe4rrUqQ/exec"; // must end in /exec
-// ==================================
+/* ============================================================
+   SUBSCRIPTION CHECKOUT — Razorpay Subscriptions (recommended for
+   INR pricing + Indian customers). Swap for Stripe Billing if you
+   need international cards; the client-side flow below stays the
+   same shape either way.
 
-const packageSelect = document.getElementById("packageSelect");
-const amountText = document.getElementById("amountText");
-const upiIdText = document.getElementById("upiIdText");
-const payBtn = document.getElementById("payBtn");
-const copyUpiBtn = document.getElementById("copyUpiBtn");
-const confirmBtn = document.getElementById("confirmBtn");
-const statusMsg = document.getElementById("statusMsg");
-const paymentCard = document.getElementById("paymentCard");
+   This is a FRONTEND SCAFFOLD ONLY. Razorpay subscriptions require
+   a small backend step (creating the plan + subscription id) —
+   never create real orders/subscriptions purely client-side, or
+   anyone could open devtools and pay ₹1. See the deployment notes
+   the assistant provided for the two backend calls you need to add.
+   ============================================================ */
 
-upiIdText.textContent = UPI_ID;
+const plans = document.querySelectorAll(".planOption");
+const billingSwitch = document.getElementById("billingSwitch");
+const lblMonthly = document.getElementById("lblMonthly");
+const lblYearly = document.getElementById("lblYearly");
+let selectedPlan = document.querySelector(".planOption.selected");
+let isYearly = false;
 
-function currentAmount() {
-  return Number(packageSelect.selectedOptions[0].dataset.amount);
+const urlPlan = new URLSearchParams(window.location.search).get("plan");
+if (urlPlan) {
+  const match = document.querySelector('.planOption[data-plan="' + urlPlan + '"]');
+  if (match) { plans.forEach(p => p.classList.remove("selected")); match.classList.add("selected"); selectedPlan = match; }
 }
 
-function updateAmountDisplay() {
-  const amt = currentAmount();
-  amountText.textContent = "₹" + amt.toLocaleString("en-IN");
-  paymentCard.classList.toggle("hidden", amt === 0);
+plans.forEach(p => p.addEventListener("click", () => {
+  plans.forEach(x => x.classList.remove("selected"));
+  p.classList.add("selected");
+  selectedPlan = p;
+  updateSummary();
+}));
+
+billingSwitch.addEventListener("click", () => {
+  isYearly = !isYearly;
+  billingSwitch.classList.toggle("active", isYearly);
+  lblMonthly.classList.toggle("on", !isYearly);
+  lblYearly.classList.toggle("on", isYearly);
+  updateSummary();
+});
+
+function updateSummary() {
+  const name = selectedPlan.querySelector(".pName").textContent;
+  const setup = selectedPlan.dataset.setup;
+  const monthly = selectedPlan.dataset.monthly;
+  const yearly = selectedPlan.dataset.yearly;
+  document.getElementById("sumPlan").textContent = name + (isYearly ? " (Annual)" : " (Monthly)");
+  document.getElementById("sumSetup").textContent = "₹" + Number(setup).toLocaleString("en-IN");
+  document.getElementById("sumRecurring").textContent = isYearly
+    ? "₹" + Number(yearly).toLocaleString("en-IN") + "/yr"
+    : "₹" + Number(monthly).toLocaleString("en-IN") + "/mo";
+  document.getElementById("sumTotal").textContent = "₹" + Number(setup).toLocaleString("en-IN");
 }
-packageSelect.addEventListener("change", updateAmountDisplay);
-updateAmountDisplay();
+updateSummary();
 
-payBtn.addEventListener("click", () => {
-  const amt = currentAmount();
-  if (amt <= 0) {
-    alert("Please select a paid package");
-    return;
-  }
+document.getElementById("payBtn").addEventListener("click", async () => {
+  const fullName = document.getElementById("fullName").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  if (!fullName || !email || !phone) { alert("Please fill in your name, email, and phone."); return; }
 
-  // Extract package name
-  const pkgText = packageSelect.selectedOptions[0].text;
-  const pkgName = pkgText.split(" — ")[0];
-  
-  // Build UPI URL
-  const upiUrl = `upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(PAYEE_NAME)}&am=${amt}&cu=INR&tn=${encodeURIComponent(pkgName)}`;
-  
-  console.log("UPI URL:", upiUrl); // For debugging
-  
-  window.location.href = upiUrl;
-});
-// ===== OPTIONAL: FALLBACK HANDLER =====
-// This shows a message if UPI app doesn't open after 1.5 seconds
-const upiLinkTimeout = setTimeout(() => {
-  console.warn("UPI app may not be installed or accessible");
-}, 1500);
-
-// Clear timeout if user clicks pay button
-payBtn.addEventListener("click", () => {
-  clearTimeout(upiLinkTimeout);
-});
-// =====================================
-copyUpiBtn.addEventListener("click", () => {
-  navigator.clipboard.writeText(UPI_ID).then(() => {
-    copyUpiBtn.textContent = "Copied!";
-    setTimeout(() => copyUpiBtn.textContent = "Copy", 1500);
-  });
-});
-
-confirmBtn.addEventListener("click", async () => {
-  const name = document.getElementById("nameInput").value.trim();
-  const contact = document.getElementById("contactInput").value.trim();
-  const txn = document.getElementById("txnInput").value.trim();
-  const pkg = packageSelect.selectedOptions[0].text;
-  const amt = currentAmount();
-
-  if (!name || !contact) {
-    showStatus("Please fill in your name and contact info.", "error");
-    return;
-  }
-
-  confirmBtn.disabled = true;
-  showStatus("Submitting...", "");
+  const payBtn = document.getElementById("payBtn");
+  payBtn.disabled = true;
+  payBtn.textContent = "Preparing checkout...";
 
   try {
-    const res = await fetch(WEBHOOK_URL, {
+    // STEP 1 — ask YOUR backend to create a Razorpay subscription and
+    // return { subscription_id, key_id }. Do this server-side so your
+    // Key Secret never touches the browser. Replace this URL with your
+    // own backend endpoint (Apps Script, Node, or Supabase function).
+    const res = await fetch("PASTE_YOUR_BACKEND_CREATE_SUBSCRIPTION_URL_HERE", {
       method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        action: "payment_confirm",
-        fields: { name: name, contact: contact, package: pkg, amount: amt, transaction_ref: txn || "(not provided)" }
+        plan: selectedPlan.dataset.plan,
+        billing: isYearly ? "yearly" : "monthly",
+        customer: { fullName, email, phone, businessName: document.getElementById("businessName").value.trim() }
       })
     });
-    const rawText = await res.text();
-    let data;
-    try { data = JSON.parse(rawText); } catch (e) { data = null; }
+    const order = await res.json();
 
-    if (!data || data.status !== "success") {
-      showStatus("Something went wrong: " + (data ? data.message : rawText.slice(0, 200)), "error");
-    } else {
-      showStatus("✅ Thanks! We've received your confirmation and will follow up shortly.", "success");
-    }
+    // STEP 2 — open Razorpay's checkout with the subscription id your
+    // backend returned.
+    const rzp = new Razorpay({
+      key: order.key_id,                 // Razorpay Key ID (public, safe on frontend)
+      subscription_id: order.subscription_id,
+      name: "AssistQ",
+      description: selectedPlan.querySelector(".pName").textContent + " subscription",
+      image: "",
+      prefill: { name: fullName, email: email, contact: phone },
+      theme: { color: "#cba468" },
+      handler: function (response) {
+        // Payment succeeded client-side. ALWAYS verify the signature
+        // on your backend before marking the account active.
+        window.location.href = "thank-you.html?sub=" + response.razorpay_subscription_id;
+      },
+      modal: { ondismiss: function () { payBtn.disabled = false; payBtn.textContent = "Pay setup fee & start subscription"; } }
+    });
+    rzp.open();
   } catch (err) {
-    showStatus("Request failed: " + err.message, "error");
+    alert("Couldn't start checkout: " + err.message + "\n\n(This page needs its backend endpoint connected — see deployment notes.)");
+    payBtn.disabled = false;
+    payBtn.textContent = "Pay setup fee & start subscription";
   }
-
-  confirmBtn.disabled = false;
 });
-
-function showStatus(text, type) {
-  statusMsg.textContent = text;
-  statusMsg.className = "status " + type;
-  statusMsg.style.display = "block";
-}
 </script>
 
 </body>

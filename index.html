@@ -353,7 +353,20 @@
     <a onclick="scrollToSection('pricingSection')">Pricing</a>
     <a onclick="scrollToSection('faqSection')">FAQ</a>
   </div>
-  <a class="backLink" href="dashboard/login.html" style="font-family:var(--mono); font-size:12px; color:var(--inkMuted); margin-right:18px;">Client Login</a>
+  <!--
+    CLIENT LOGIN LINK — points at your deployed dashboard app, NOT a file
+    on this site. The dashboard is a separate Node/Express app (deployed
+    on Railway) with its own login screen at its root URL.
+
+    Set this to:
+      - your Railway-provided URL for testing, e.g.
+        https://your-app-name.up.railway.app
+      - once you've added a custom subdomain in Railway + a CNAME record
+        at your DNS provider, switch it to that, e.g. https://app.assistq.in
+
+    See DATABASE_SETUP.md / the dashboard README for the domain setup steps.
+  -->
+  <a class="backLink" href="https://app.assistq.in" style="font-family:var(--mono); font-size:12px; color:var(--inkMuted); margin-right:18px;">Client Login</a>
   <button class="navCta" id="navChatBtn">Talk to us</button>
 </nav>
 
@@ -594,8 +607,8 @@
   <p>Chat with our AI assistant right now to see exactly how it works, or reach out directly — we'll get back to you fast.</p>
   <button class="btnPrimary" id="footerChatBtn">Start a Conversation</button>
   <div class="contactRow" id="contactRow">
-    <span>+91 8446242738</span>
-    <span>assistq1@gmail.com</span>
+    <span>+91 00000 00000</span>
+    <span>hello@assistq.in</span>
   </div>
 </div>
 

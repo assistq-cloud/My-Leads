@@ -130,7 +130,7 @@
       <label for="phone">Phone (WhatsApp)</label>
       <input id="phone" type="tel" placeholder="+91 " />
       <button class="payBtn" id="payBtn">Pay setup fee &amp; start subscription</button>
-      <div class="trustNote">🔒 Payments processed securely via Razorpay · Cancel anytime</div>
+      <div class="trustNote">🔒 Payments processed securely via Razorpay · Cancel anytime · <a href="privacy.html">Privacy Policy</a></div>
     </div>
   </div>
 
@@ -184,8 +184,8 @@ const WEBSITE_CHARGE = 2999;
 
 const INCLUDED = {
   starter: ["AI chatbot qualifies every visitor", "Instant lead delivery — email + WhatsApp", "Weekly performance summary by email", "No dashboard login — leads come straight to you"],
-  growth: ["Everything in Starter", "Full dashboard — SEO, keywords, UTM tracking", "Sales pipeline, site visits, testimonials", "Lead scoring — Hot / Warm / Cold"],
-  premium: ["Everything in Growth", "Full team & project inventory management", "Automation, marketing ROI, channel partners", "Commission & possession tracking, RERA QA"]
+  growth: ["Full dashboard login", "Leads &amp; Conversations inbox", "SEO Audit + Keyword rank tracking", "UTM / campaign analytics + GA4/GSC", "Sales Pipeline, Site Visits, Testimonials, Document Vault", "EMI calculator"],
+  premium: ["Everything in Growth", "Projects &amp; unit-level inventory", "Sales team management &amp; performance", "Automation engine + WhatsApp Cloud API", "Marketing ROI by source", "Channel partners, commissions, possession tracker, RERA QA"]
 };
 
 const urlPlan = new URLSearchParams(window.location.search).get("plan");
@@ -257,7 +257,7 @@ document.getElementById("payBtn").addEventListener("click", async () => {
     // Pass isTrial + noWebsite through so your backend can set
     // start_at (trial deferral) and add the one-time website charge
     // as an add-on invoice item.
-    const res = await fetch("PASTE_YOUR_BACKEND_CREATE_SUBSCRIPTION_URL_HERE", {
+    const res = await fetch("https://app.assistq.in/api/billing/create-subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -279,10 +279,29 @@ document.getElementById("payBtn").addEventListener("click", async () => {
       image: "",
       prefill: { name: fullName, email: email, contact: phone },
       theme: { color: "#cba468" },
-      handler: function (response) {
-        // Payment succeeded client-side. ALWAYS verify the signature
-        // on your backend before marking the account active.
-        window.location.href = "thank-you.html?sub=" + response.razorpay_subscription_id;
+      handler: async function (response) {
+        // Payment succeeded client-side — this alone is NOT proof of a
+        // genuinely valid payment, so verify the signature server-side
+        // before treating the account as active.
+        payBtn.textContent = "Verifying payment...";
+        try {
+          const verifyRes = await fetch("https://app.assistq.in/api/billing/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_subscription_id: response.razorpay_subscription_id,
+              razorpay_signature: response.razorpay_signature
+            })
+          });
+          const verified = await verifyRes.json();
+          if (!verifyRes.ok) throw new Error(verified.error || "Verification failed");
+          window.location.href = "thank-you.html?clientId=" + encodeURIComponent(verified.clientId) + "&plan=" + encodeURIComponent(verified.plan);
+        } catch (err) {
+          alert("Payment succeeded, but we couldn't verify and activate your account automatically: " + err.message + "\n\nDon't worry — contact us with your payment ID (" + response.razorpay_payment_id + ") and we'll set it up manually.");
+          payBtn.disabled = false;
+          payBtn.textContent = "Pay setup fee & start subscription";
+        }
       },
       modal: { ondismiss: function () { payBtn.disabled = false; payBtn.textContent = "Pay setup fee & start subscription"; } }
     });

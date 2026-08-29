@@ -11,10 +11,10 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
   :root {
-    --bg: #06070a; --bgElevated: #0b0d12; --card: rgba(255,255,255,0.035);
-    --cardBorder: rgba(255,255,255,0.08); --ink: #f2efe7; --inkMuted: #8d8f9c; --inkFaint: #5c5e6b;
+    --bg: #0a0906; --bgElevated: #100e0a; --card: rgba(255,255,255,0.035);
+    --cardBorder: rgba(255,255,255,0.08); --ink: #f2efe7; --inkMuted: #948d7e; --inkFaint: #57534a;
     --gold: #cba468; --goldBright: #e8cd94; --goldSoft: rgba(203,164,104,0.14); --border: rgba(203,164,104,0.22);
-    --dark: #030407; --glow: 203,164,104;
+    --sage: #7c9a72; --dark: #030302; --glow: 203,164,104;
     --serif: "Fraunces", Georgia, serif; --sans: "Manrope", -apple-system, sans-serif; --mono: "IBM Plex Mono", monospace;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,24 +33,23 @@
   h1 { font-family: var(--serif); font-weight:600; font-size: 32px; letter-spacing:-0.6px; margin-bottom: 10px; }
   .subCopy { color: var(--inkMuted); font-size: 14.5px; margin-bottom: 34px; max-width: 460px; }
 
-  .planGrid { display:flex; gap: 14px; margin-bottom: 30px; flex-wrap: wrap; }
+  .planGrid { display:flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
   .planOption {
-    flex:1; min-width: 200px; background: var(--card); border: 1px solid var(--cardBorder); border-radius: 16px;
-    padding: 20px; cursor:pointer; transition: border-color .2s ease, background .2s ease;
+    flex:1; min-width: 160px; background: var(--card); border: 1px solid var(--cardBorder); border-radius: 16px;
+    padding: 18px; cursor:pointer; transition: border-color .2s ease, background .2s ease; position: relative;
   }
   .planOption.selected { border-color: var(--border); background: linear-gradient(180deg, rgba(203,164,104,0.1), rgba(203,164,104,0.02)); }
-  .planOption .pName { font-family: var(--serif); font-weight:600; font-size:16px; margin-bottom:6px; }
-  .planOption .pPrice { font-family: var(--serif); font-size: 22px; color: var(--goldBright); margin-bottom: 2px; }
-  .planOption .pNote { font-size: 11.5px; color: var(--inkFaint); }
+  .planOption .trialBadge { position: absolute; top: -9px; right: 10px; background: var(--sage); color: #0b1409; font-family: var(--mono); font-size: 8.5px; font-weight: 700; padding: 3px 8px; border-radius: 8px; letter-spacing: .4px; }
+  .planOption .pName { font-family: var(--serif); font-weight:600; font-size:15px; margin-bottom:6px; }
+  .planOption .pPrice { font-family: var(--serif); font-size: 20px; color: var(--goldBright); margin-bottom: 2px; }
+  .planOption .pNote { font-size: 11px; color: var(--inkFaint); }
 
-  .billingToggle { display:flex; align-items:center; gap:12px; margin-bottom: 34px; }
-  .billingToggle span { font-size: 13px; color: var(--inkMuted); }
-  .billingToggle span.on { color: var(--ink); }
-  .switch { width: 44px; height: 24px; border-radius: 20px; background: rgba(255,255,255,0.08); border: 1px solid var(--cardBorder); position:relative; cursor:pointer; }
-  .switch.active { background: var(--goldSoft); border-color: var(--border); }
-  .switch i { position:absolute; top:2px; left:2px; width:18px; height:18px; border-radius:50%; background: var(--inkFaint); transition: left .2s ease, background .2s ease; }
-  .switch.active i { left: 22px; background: var(--goldBright); }
-  .saveTag { font-family: var(--mono); font-size: 10.5px; color: #1c1408; background: linear-gradient(135deg,var(--goldBright),var(--gold)); padding: 3px 9px; border-radius: 8px; }
+  .noWebsiteRow { display:flex; align-items:center; gap: 12px; background: var(--card); border: 1px solid var(--cardBorder); border-radius: 14px; padding: 16px 18px; margin-bottom: 34px; cursor: pointer; }
+  .noWebsiteRow .checkbox { width: 20px; height: 20px; border-radius: 6px; border: 1.5px solid var(--cardBorder); flex-shrink: 0; display:flex; align-items:center; justify-content:center; transition: border-color .2s ease, background .2s ease; }
+  .noWebsiteRow.checked .checkbox { background: var(--gold); border-color: var(--gold); color: #100b03; font-weight: 700; }
+  .noWebsiteRow .label { font-size: 13.5px; }
+  .noWebsiteRow .label b { color: var(--ink); }
+  .noWebsiteRow .label span { display: block; font-size: 11.5px; color: var(--inkFaint); margin-top: 2px; }
 
   .formCard { background: var(--card); border: 1px solid var(--cardBorder); border-radius: 18px; padding: 26px; }
   .formCard label { display:block; font-size: 12.5px; color: var(--inkMuted); margin-bottom: 6px; margin-top: 16px; }
@@ -75,10 +74,12 @@
   .sumRow { display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13.5px; color: var(--inkMuted); }
   .sumRow.total { border-bottom:none; padding-top: 16px; font-size: 16px; color: var(--ink); font-family: var(--serif); }
   .sumRow.total b { color: var(--goldBright); }
+  .trialNote { margin-top: 10px; font-size: 11.5px; color: var(--sage); background: rgba(124,154,114,0.1); border: 1px solid rgba(124,154,114,0.3); border-radius: 10px; padding: 10px 12px; line-height: 1.5; }
   .includedList { margin-top: 22px; list-style:none; }
   .includedList li { font-size: 12.5px; color: var(--inkMuted); padding: 6px 0; }
   .includedList li::before { content:"✓  "; color: var(--gold); }
-  .badgeRow { display:flex; gap: 10px; margin-top: 22px; flex-wrap: wrap; }
+  .dashNote { margin-top: 14px; font-size: 11.5px; color: var(--inkFaint); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; }
+  .badgeRow { display:flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
   .badgeRow span { font-family: var(--mono); font-size: 10px; color: var(--inkFaint); border: 1px solid var(--cardBorder); padding: 5px 10px; border-radius: 8px; }
 </style>
 </head>
@@ -93,26 +94,30 @@
   <div>
     <div class="eyebrow">Subscribe</div>
     <h1>Start your AssistQ subscription</h1>
-    <p class="subCopy">Choose your plan, pick monthly or annual billing, and pay securely. Your setup fee is charged once; the plan then renews automatically until you cancel.</p>
+    <p class="subCopy">Choose your plan, add a landing page if you need one, and pay securely. Your setup fee is charged once; the plan then renews automatically until you cancel.</p>
 
     <div class="planGrid" id="planGrid">
-      <div class="planOption" data-plan="starter" data-setup="1999" data-monthly="2999" data-yearly="29990">
-        <div class="pName">Smart Form</div>
-        <div class="pPrice">₹2,999<span style="font-size:12px;color:var(--inkFaint);">/mo</span></div>
-        <div class="pNote">+ ₹1,999 one-time setup</div>
+      <div class="planOption" data-plan="starter" data-setup="1999" data-monthly="999" data-trial="true">
+        <span class="trialBadge">15-DAY TRIAL</span>
+        <div class="pName">Starter</div>
+        <div class="pPrice">₹999<span style="font-size:11px;color:var(--inkFaint);">/mo</span></div>
+        <div class="pNote">+ ₹1,999 setup · no dashboard</div>
       </div>
-      <div class="planOption selected" data-plan="suite" data-setup="5999" data-monthly="7999" data-yearly="79990">
-        <div class="pName">AI Chatbot Suite</div>
-        <div class="pPrice">₹7,999<span style="font-size:12px;color:var(--inkFaint);">/mo</span></div>
-        <div class="pNote">+ ₹5,999 one-time setup · includes SEO &amp; dashboard</div>
+      <div class="planOption selected" data-plan="growth" data-setup="2999" data-monthly="3499" data-trial="false">
+        <div class="pName">Growth</div>
+        <div class="pPrice">₹3,499<span style="font-size:11px;color:var(--inkFaint);">/mo</span></div>
+        <div class="pNote">+ ₹2,999 setup · dashboard included</div>
+      </div>
+      <div class="planOption" data-plan="premium" data-setup="4999" data-monthly="6999" data-trial="false">
+        <div class="pName">Premium</div>
+        <div class="pPrice">₹6,999<span style="font-size:11px;color:var(--inkFaint);">/mo</span></div>
+        <div class="pNote">+ ₹4,999 setup · full CRM</div>
       </div>
     </div>
 
-    <div class="billingToggle">
-      <span class="on" id="lblMonthly">Monthly</span>
-      <div class="switch" id="billingSwitch"><i></i></div>
-      <span id="lblYearly">Annual</span>
-      <span class="saveTag">Save ~17% annually</span>
+    <div class="noWebsiteRow" id="noWebsiteRow">
+      <div class="checkbox" id="noWebsiteCheckbox"></div>
+      <div class="label"><b>I don't have a website</b> — add a hosted landing page (+₹2,999 one-time)<span>Skip this if the chatbot will go on your existing site — that's free on every plan.</span></div>
     </div>
 
     <div class="formCard">
@@ -131,18 +136,20 @@
 
   <div class="summaryCard">
     <h3>Order summary</h3>
-    <div class="sumRow"><span>Plan</span><span id="sumPlan">AI Chatbot Suite</span></div>
-    <div class="sumRow"><span>Setup fee (one-time)</span><span id="sumSetup">₹5,999</span></div>
-    <div class="sumRow"><span>Subscription</span><span id="sumRecurring">₹7,999/mo</span></div>
-    <div class="sumRow total"><span>Due today</span><b id="sumTotal">₹5,999</b></div>
+    <div class="sumRow"><span>Plan</span><span id="sumPlan">Growth</span></div>
+    <div class="sumRow" id="sumWebsiteRow" style="display:none"><span>Landing page (no website)</span><span>₹2,999</span></div>
+    <div class="sumRow"><span>Setup fee (one-time)</span><span id="sumSetup">₹2,999</span></div>
+    <div class="sumRow"><span>Subscription</span><span id="sumRecurring">₹3,499/mo</span></div>
+    <div class="sumRow total"><span>Due today</span><b id="sumTotal">₹5,998</b></div>
+    <div class="trialNote" id="trialNote" style="display:none">15-day free trial included — you're only charged the setup fee today. Your first monthly charge lands after day 15, and you can cancel any time before then at no cost.</div>
     <ul class="includedList" id="includedList">
-      <li>Full conversational AI qualification</li>
+      <li>AI chatbot qualifies every visitor</li>
       <li>Lead scoring — Hot / Warm / Cold</li>
-      <li>SEO growth included, no separate plan</li>
-      <li>Your dashboard — keywords, audits, UTM, config</li>
+      <li>Full dashboard — SEO, keywords, UTM, pipeline</li>
       <li>Weekly performance report</li>
     </ul>
-    <div class="badgeRow"><span>15-DAY TRIAL</span><span>NO LOCK-IN</span><span>FOUNDING RATE</span></div>
+    <div class="dashNote" id="dashNote">Dashboard access included with this plan.</div>
+    <div class="badgeRow" id="badgeRow"><span>NO LOCK-IN</span><span>FOUNDING RATE</span></div>
   </div>
 </div>
 
@@ -158,14 +165,28 @@
    never create real orders/subscriptions purely client-side, or
    anyone could open devtools and pay ₹1. See the deployment notes
    the assistant provided for the two backend calls you need to add.
+
+   TRIAL LOGIC: only the Starter plan is a trial. When Starter is
+   selected, "Due today" is the setup fee only (+ website charge if
+   checked) — your backend's subscription-creation call should pass
+   Razorpay's `start_at` ~15 days out for Starter so the first
+   recurring charge is deferred; Growth and Premium should NOT set
+   start_at, so they bill the first cycle immediately alongside setup.
    ============================================================ */
 
 const plans = document.querySelectorAll(".planOption");
-const billingSwitch = document.getElementById("billingSwitch");
-const lblMonthly = document.getElementById("lblMonthly");
-const lblYearly = document.getElementById("lblYearly");
+const noWebsiteRow = document.getElementById("noWebsiteRow");
+const noWebsiteCheckbox = document.getElementById("noWebsiteCheckbox");
 let selectedPlan = document.querySelector(".planOption.selected");
-let isYearly = false;
+let noWebsite = false;
+
+const WEBSITE_CHARGE = 2999;
+
+const INCLUDED = {
+  starter: ["AI chatbot qualifies every visitor", "Instant lead delivery — email + WhatsApp", "Weekly performance summary by email", "No dashboard login — leads come straight to you"],
+  growth: ["Everything in Starter", "Full dashboard — SEO, keywords, UTM tracking", "Sales pipeline, site visits, testimonials", "Lead scoring — Hot / Warm / Cold"],
+  premium: ["Everything in Growth", "Full team & project inventory management", "Automation, marketing ROI, channel partners", "Commission & possession tracking, RERA QA"]
+};
 
 const urlPlan = new URLSearchParams(window.location.search).get("plan");
 if (urlPlan) {
@@ -180,25 +201,41 @@ plans.forEach(p => p.addEventListener("click", () => {
   updateSummary();
 }));
 
-billingSwitch.addEventListener("click", () => {
-  isYearly = !isYearly;
-  billingSwitch.classList.toggle("active", isYearly);
-  lblMonthly.classList.toggle("on", !isYearly);
-  lblYearly.classList.toggle("on", isYearly);
+noWebsiteRow.addEventListener("click", () => {
+  noWebsite = !noWebsite;
+  noWebsiteRow.classList.toggle("checked", noWebsite);
+  noWebsiteCheckbox.textContent = noWebsite ? "✓" : "";
   updateSummary();
 });
 
 function updateSummary() {
+  const plan = selectedPlan.dataset.plan;
   const name = selectedPlan.querySelector(".pName").textContent;
-  const setup = selectedPlan.dataset.setup;
-  const monthly = selectedPlan.dataset.monthly;
-  const yearly = selectedPlan.dataset.yearly;
-  document.getElementById("sumPlan").textContent = name + (isYearly ? " (Annual)" : " (Monthly)");
-  document.getElementById("sumSetup").textContent = "₹" + Number(setup).toLocaleString("en-IN");
-  document.getElementById("sumRecurring").textContent = isYearly
-    ? "₹" + Number(yearly).toLocaleString("en-IN") + "/yr"
-    : "₹" + Number(monthly).toLocaleString("en-IN") + "/mo";
-  document.getElementById("sumTotal").textContent = "₹" + Number(setup).toLocaleString("en-IN");
+  const setup = Number(selectedPlan.dataset.setup);
+  const monthly = Number(selectedPlan.dataset.monthly);
+  const isTrial = selectedPlan.dataset.trial === "true";
+
+  document.getElementById("sumPlan").textContent = name;
+  document.getElementById("sumSetup").textContent = "₹" + setup.toLocaleString("en-IN");
+  document.getElementById("sumRecurring").textContent = "₹" + monthly.toLocaleString("en-IN") + "/mo";
+
+  const websiteRow = document.getElementById("sumWebsiteRow");
+  websiteRow.style.display = noWebsite ? "flex" : "none";
+
+  let dueToday = setup + (noWebsite ? WEBSITE_CHARGE : 0);
+  if (!isTrial) dueToday += monthly; // Growth/Premium bill setup + first month immediately, no trial
+  document.getElementById("sumTotal").textContent = "₹" + dueToday.toLocaleString("en-IN");
+
+  document.getElementById("trialNote").style.display = isTrial ? "block" : "none";
+  document.getElementById("dashNote").textContent = plan === "starter"
+    ? "No dashboard login on this plan — your leads arrive by WhatsApp and email."
+    : "Dashboard access included with this plan.";
+
+  document.getElementById("includedList").innerHTML = INCLUDED[plan].map(x => "<li>" + x + "</li>").join("");
+
+  const badges = ["NO LOCK-IN", "FOUNDING RATE"];
+  if (isTrial) badges.unshift("15-DAY TRIAL");
+  document.getElementById("badgeRow").innerHTML = badges.map(b => "<span>" + b + "</span>").join("");
 }
 updateSummary();
 
@@ -217,12 +254,16 @@ document.getElementById("payBtn").addEventListener("click", async () => {
     // return { subscription_id, key_id }. Do this server-side so your
     // Key Secret never touches the browser. Replace this URL with your
     // own backend endpoint (Apps Script, Node, or Supabase function).
+    // Pass isTrial + noWebsite through so your backend can set
+    // start_at (trial deferral) and add the one-time website charge
+    // as an add-on invoice item.
     const res = await fetch("PASTE_YOUR_BACKEND_CREATE_SUBSCRIPTION_URL_HERE", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         plan: selectedPlan.dataset.plan,
-        billing: isYearly ? "yearly" : "monthly",
+        isTrial: selectedPlan.dataset.trial === "true",
+        noWebsite: noWebsite,
         customer: { fullName, email, phone, businessName: document.getElementById("businessName").value.trim() }
       })
     });

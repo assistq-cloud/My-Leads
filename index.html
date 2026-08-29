@@ -4,24 +4,26 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>AssistQ — AI Lead Qualification & Conversion System</title>
+<meta name="description" content="AssistQ engages every visitor the moment they land, qualifies them with a real conversation, and delivers only the leads worth calling — 24/7." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #06070a;
-    --bgElevated: #0b0d12;
+    --bg: #0a0906;
+    --bgElevated: #100e0a;
     --card: rgba(255,255,255,0.035);
     --cardBorder: rgba(255,255,255,0.08);
     --cardHover: rgba(255,255,255,0.06);
     --ink: #f2efe7;
-    --inkMuted: #8d8f9c;
-    --inkFaint: #5c5e6b;
+    --inkMuted: #948d7e;
+    --inkFaint: #57534a;
     --gold: #cba468;
     --goldBright: #e8cd94;
     --goldSoft: rgba(203,164,104,0.14);
     --border: rgba(203,164,104,0.22);
-    --dark: #030407;
+    --sage: #7c9a72;
+    --dark: #030302;
     --glow: 203,164,104;
     --serif: "Fraunces", Georgia, serif;
     --sans: "Manrope", -apple-system, "Segoe UI", sans-serif;
@@ -29,303 +31,214 @@
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
-  body {
-    font-family: var(--sans);
-    background: var(--bg);
-    color: var(--ink);
-    line-height: 1.55;
-    position: relative;
-    overflow-x: hidden;
-  }
+  @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: 0.001ms !important; animation-iteration-count: 1 !important; transition-duration: 0.001ms !important; } }
+  body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.55; position: relative; overflow-x: hidden; }
   a { color: inherit; }
   ::selection { background: var(--goldSoft); color: var(--goldBright); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  img, svg { display: block; max-width: 100%; }
 
-  /* ---- Cursor glow layer (signature element) ---- */
-  #cursorGlow {
-    position: fixed; inset: 0; pointer-events: none; z-index: 2;
-    background: radial-gradient(600px circle at var(--x, 50%) var(--y, 30%),
-                rgba(var(--glow), 0.10), transparent 42%);
-    transition: background 60ms linear;
-  }
-  #cursorDot {
-    position: fixed; width: 10px; height: 10px; border-radius: 50%;
-    border: 1px solid var(--gold); pointer-events: none; z-index: 9998;
-    transform: translate(-50%, -50%); transition: width .18s, height .18s, opacity .18s, border-color .18s;
-    opacity: 0;
-  }
-  @media (hover: hover) and (pointer: fine) { #cursorDot { opacity: 1; } }
-  #cursorDot.hoverable { width: 34px; height: 34px; background: var(--goldSoft); border-color: transparent; }
+  .noise { position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.03; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
 
-  .noise {
-    position: fixed; inset: 0; z-index: 1; pointer-events: none; opacity: 0.035; mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
+  /* ---- reveal-on-scroll ---- */
+  .reveal { opacity: 0; transform: translateY(22px); transition: opacity .7s cubic-bezier(.16,.84,.44,1), transform .7s cubic-bezier(.16,.84,.44,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
 
   /* ---- Nav ---- */
-  nav {
-    position: sticky; top: 0; z-index: 200;
-    background: rgba(6,7,10,0.72); backdrop-filter: blur(16px) saturate(140%);
-    border-bottom: 1px solid var(--cardBorder);
-    padding: 18px 32px;
-    display: flex; justify-content: space-between; align-items: center;
-  }
-  nav .navBrand { font-family: var(--serif); font-weight: 600; font-size: 21px; letter-spacing: -0.3px; color: var(--ink); }
+  nav { position: sticky; top: 0; z-index: 200; background: rgba(10,9,6,0.72); backdrop-filter: blur(16px) saturate(140%); border-bottom: 1px solid var(--cardBorder); padding: 18px 32px; display: flex; justify-content: space-between; align-items: center; }
+  nav .navBrand { font-family: var(--serif); font-weight: 600; font-size: 21px; letter-spacing: -0.3px; }
   nav .navBrand span { color: var(--gold); }
   nav .navLinks { display: flex; gap: 30px; }
   nav .navLinks a { text-decoration: none; font-size: 13px; color: var(--inkMuted); cursor: pointer; letter-spacing: 0.2px; position: relative; }
   nav .navLinks a::after { content:""; position:absolute; left:0; bottom:-4px; width:0; height:1px; background: var(--gold); transition: width .25s ease; }
   nav .navLinks a:hover { color: var(--ink); }
   nav .navLinks a:hover::after { width: 100%; }
-  nav .navCta {
-    background: linear-gradient(135deg, var(--gold), #b78a4f); color: #100b03; border: none;
-    padding: 11px 24px; border-radius: 30px; font-size: 13px; font-family: var(--sans);
-    font-weight: 700; cursor: pointer; letter-spacing: 0.2px;
-    box-shadow: 0 6px 20px rgba(var(--glow), 0.25);
-  }
+  nav .navRight { display: flex; align-items: center; gap: 18px; }
+  nav .backLink { font-family: var(--mono); font-size: 12px; color: var(--inkMuted); text-decoration: none; }
+  nav .backLink:hover { color: var(--gold); }
+  nav .navCta { background: linear-gradient(135deg, var(--gold), #b78a4f); color: #100b03; border: none; padding: 11px 24px; border-radius: 30px; font-size: 13px; font-weight: 700; cursor: pointer; letter-spacing: 0.2px; box-shadow: 0 6px 20px rgba(var(--glow), 0.25); transition: transform .2s ease, box-shadow .2s ease; }
   nav .navCta:hover { box-shadow: 0 8px 26px rgba(var(--glow), 0.4); transform: translateY(-1px); }
-  @media (max-width: 760px) { nav .navLinks { display: none; } }
+  @media (max-width: 860px) { nav .navLinks { display: none; } }
 
-  /* ---- Hero ---- */
-  header {
-    position: relative; z-index: 3;
-    padding: 110px 32px 90px;
-    max-width: 1180px; margin: 0 auto;
-    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: 60px; align-items: center;
-  }
-  header::before {
-    content:""; position:absolute; top:-140px; left:50%; transform:translateX(-50%);
-    width: 900px; height: 500px; z-index:-1;
-    background: radial-gradient(ellipse at center, rgba(var(--glow),0.16), transparent 65%);
-    filter: blur(10px);
-  }
-  @media (max-width: 900px) { header { grid-template-columns: 1fr; padding: 90px 22px 60px; } }
-
-  .heroCopy .eyebrow {
-    display: inline-flex; align-items:center; gap:8px; font-family: var(--mono); font-size: 11.5px; font-weight: 500; color: var(--gold);
-    letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 22px;
-    border: 1px solid var(--border); padding: 7px 14px; border-radius: 20px;
-  }
+  /* ---- Hero: the conversation IS the hero ---- */
+  header { position: relative; z-index: 3; padding: 84px 32px 60px; max-width: 900px; margin: 0 auto; text-align: center; }
+  header::before { content:""; position:absolute; top:-160px; left:50%; transform:translateX(-50%); width: 1000px; height: 560px; z-index:-1; background: radial-gradient(ellipse at center, rgba(var(--glow),0.14), transparent 65%); filter: blur(10px); }
+  .eyebrow { display: inline-flex; align-items:center; gap:8px; font-family: var(--mono); font-size: 11.5px; font-weight: 500; color: var(--gold); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 22px; border: 1px solid var(--border); padding: 7px 14px; border-radius: 20px; }
   .eyebrow .dot { width:6px; height:6px; border-radius:50%; background: var(--gold); box-shadow: 0 0 8px var(--gold); animation: pulse 2s infinite; }
   @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:.35;} }
-  header h1 { font-family: var(--serif); font-weight: 600; font-size: 52px; line-height: 1.1; letter-spacing: -1.2px; color: var(--ink); margin-bottom: 22px; }
+  header h1 { font-family: var(--serif); font-weight: 600; font-size: 44px; line-height: 1.14; letter-spacing: -1px; margin-bottom: 16px; }
   header h1 em { font-style: italic; color: var(--goldBright); font-weight: 500; }
-  header .sub { font-size: 17px; color: var(--inkMuted); max-width: 480px; margin-bottom: 36px; }
-  header .heroBtns { display: flex; gap: 14px; flex-wrap: wrap; }
-  .btnPrimary {
-    background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #100b03; border: none;
-    padding: 16px 30px; border-radius: 30px; font-size: 14.5px; font-family: var(--sans);
-    font-weight: 700; cursor: pointer; box-shadow: 0 12px 30px rgba(var(--glow),0.3);
-    transition: transform .2s ease, box-shadow .2s ease;
-  }
+  header .sub { font-size: 16px; color: var(--inkMuted); max-width: 500px; margin: 0 auto 44px; }
+
+  /* Live-typing conversation demo — the signature element */
+  .demoStage { max-width: 460px; margin: 0 auto; position: relative; }
+  .demoCard { background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015)); border: 1px solid var(--cardBorder); border-radius: 22px; backdrop-filter: blur(20px); padding: 22px; box-shadow: 0 30px 80px rgba(0,0,0,0.55); text-align: left; }
+  .demoCard .demoHead { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+  .demoCard .demoHead .dots { display:flex; gap:6px; }
+  .demoCard .demoHead .dots i { width:9px; height:9px; border-radius:50%; background: var(--inkFaint); display:block; }
+  .demoCard .demoHead span { font-family: var(--mono); font-size: 11px; color: var(--inkFaint); margin-left:auto; display:flex; align-items:center; gap:6px; }
+  .demoCard .demoHead .liveDot { width:6px; height:6px; border-radius:50%; background: var(--sage); box-shadow: 0 0 6px var(--sage); }
+  #demoMessages { min-height: 210px; display: flex; flex-direction: column; gap: 10px; justify-content: flex-end; }
+  .demoBubble { max-width: 84%; padding: 12px 15px; border-radius: 14px; font-size: 13.5px; line-height: 1.45; opacity: 0; }
+  .demoBubble.bot { background: rgba(255,255,255,0.05); border: 1px solid var(--cardBorder); border-bottom-left-radius: 4px; }
+  .demoBubble.user { background: linear-gradient(135deg, var(--gold), #a9803f); color:#120c04; margin-left:auto; border-bottom-right-radius: 4px; font-weight:600; }
+  .typingDots { display: inline-flex; gap: 4px; padding: 2px 0; }
+  .typingDots i { width:5px; height:5px; border-radius:50%; background: var(--inkMuted); display:block; animation: tdot 1.1s infinite ease-in-out; }
+  .typingDots i:nth-child(2) { animation-delay: .15s; } .typingDots i:nth-child(3) { animation-delay: .3s; }
+  @keyframes tdot { 0%,60%,100%{ transform: translateY(0); opacity:.4; } 30%{ transform: translateY(-4px); opacity:1; } }
+  .demoScore { display:flex; align-items:center; justify-content:space-between; margin-top:16px; padding:12px 14px; border-radius: 12px; background: rgba(203,164,104,0.08); border: 1px solid var(--border); opacity: 0; transition: opacity .5s ease; }
+  .demoScore.show { opacity: 1; }
+  .demoScore span:first-child { font-size: 12px; color: var(--inkMuted); }
+  .demoScore .badge { font-family: var(--mono); font-size: 11px; font-weight:600; color: #1c1408; background: linear-gradient(135deg,var(--goldBright),var(--gold)); padding: 4px 10px; border-radius:10px; letter-spacing:.4px; }
+  .demoCaption { text-align: center; font-family: var(--mono); font-size: 11px; color: var(--inkFaint); margin-top: 16px; letter-spacing: .3px; }
+  .heroBtns { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; margin-top: 32px; }
+  .btnPrimary { background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #100b03; border: none; padding: 16px 30px; border-radius: 30px; font-size: 14.5px; font-weight: 700; cursor: pointer; box-shadow: 0 12px 30px rgba(var(--glow),0.3); transition: transform .2s ease, box-shadow .2s ease; }
   .btnPrimary:hover { transform: translateY(-2px); box-shadow: 0 16px 36px rgba(var(--glow),0.42); }
-  .btnSecondary {
-    background: transparent; color: var(--ink); border: 1px solid var(--cardBorder);
-    padding: 16px 28px; border-radius: 30px; font-size: 14.5px; font-family: var(--sans); font-weight: 600; cursor: pointer;
-    transition: border-color .2s ease, background .2s ease;
-  }
+  .btnSecondary { background: transparent; color: var(--ink); border: 1px solid var(--cardBorder); padding: 16px 28px; border-radius: 30px; font-size: 14.5px; font-weight: 600; cursor: pointer; transition: border-color .2s ease, background .2s ease; }
   .btnSecondary:hover { border-color: var(--gold); background: var(--goldSoft); }
+  @media (max-width: 600px) { header h1 { font-size: 32px; } }
 
-  .heroTrust { display:flex; gap:26px; margin-top: 40px; flex-wrap: wrap; }
-  .heroTrust .stat { }
-  .heroTrust .stat b { font-family: var(--serif); font-size: 24px; color: var(--goldBright); display:block; }
-  .heroTrust .stat span { font-size: 11.5px; color: var(--inkFaint); text-transform: uppercase; letter-spacing: 0.6px; }
-
-  /* ---- Hero mockup card ---- */
-  .heroVisual { position: relative; }
-  .mockCard {
-    background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.015));
-    border: 1px solid var(--cardBorder); border-radius: 22px; backdrop-filter: blur(20px);
-    padding: 22px; box-shadow: 0 30px 80px rgba(0,0,0,0.55);
-    animation: float 6s ease-in-out infinite;
-  }
-  @keyframes float { 0%,100%{ transform: translateY(0px);} 50%{ transform: translateY(-12px);} }
-  .mockCard .mockHead { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
-  .mockCard .mockHead .dots { display:flex; gap:6px; }
-  .mockCard .mockHead .dots i { width:9px; height:9px; border-radius:50%; background: var(--inkFaint); display:block; }
-  .mockCard .mockHead span { font-family: var(--mono); font-size: 11px; color: var(--inkFaint); margin-left:auto; }
-  .mockBubble { max-width: 82%; padding: 12px 15px; border-radius: 14px; font-size: 13.5px; margin-bottom: 10px; opacity:0; animation: rise .5s ease forwards; }
-  .mockBubble.bot { background: rgba(255,255,255,0.05); border: 1px solid var(--cardBorder); border-bottom-left-radius: 4px; }
-  .mockBubble.user { background: linear-gradient(135deg, var(--gold), #a9803f); color:#120c04; margin-left:auto; border-bottom-right-radius: 4px; font-weight:600; }
-  .mockBubble:nth-child(2){animation-delay:.3s;} .mockBubble:nth-child(3){animation-delay:.9s;} .mockBubble:nth-child(4){animation-delay:1.5s;} .mockBubble:nth-child(5){animation-delay:2.1s;}
-  @keyframes rise { from{ opacity:0; transform: translateY(8px);} to{ opacity:1; transform: translateY(0);} }
-  .mockScore { display:flex; align-items:center; justify-content:space-between; margin-top:14px; padding:12px 14px; border-radius: 12px; background: rgba(203,164,104,0.08); border: 1px solid var(--border); }
-  .mockScore span:first-child { font-size: 12px; color: var(--inkMuted); }
-  .mockScore .badge { font-family: var(--mono); font-size: 11px; font-weight:600; color: #1c1408; background: linear-gradient(135deg,var(--goldBright),var(--gold)); padding: 4px 10px; border-radius:10px; letter-spacing:.4px; }
-  .floatChip {
-    position:absolute; background: var(--bgElevated); border:1px solid var(--cardBorder); border-radius:14px;
-    padding: 10px 14px; font-size:12px; color: var(--inkMuted); box-shadow: 0 14px 30px rgba(0,0,0,0.5);
-    display:flex; align-items:center; gap:8px; animation: float 7s ease-in-out infinite;
-  }
-  .floatChip.c1 { top:-18px; right:-10px; animation-delay: .5s; }
-  .floatChip.c2 { bottom:20px; left:-30px; animation-delay: 1.4s; }
-  .floatChip b { color: var(--goldBright); font-family: var(--serif); }
-  @media (max-width: 900px) { .floatChip { display:none; } }
+  /* ---- Industries marquee ---- */
+  .marqueeWrap { border-top: 1px solid var(--cardBorder); border-bottom: 1px solid var(--cardBorder); padding: 20px 0; overflow: hidden; position: relative; z-index: 3; background: var(--bgElevated); }
+  .marqueeTrack { display: flex; gap: 48px; width: max-content; animation: marquee 26s linear infinite; }
+  .marqueeWrap:hover .marqueeTrack { animation-play-state: paused; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  .marqueeTrack span { font-family: var(--mono); font-size: 13px; color: var(--inkFaint); letter-spacing: .5px; white-space: nowrap; display: flex; align-items: center; gap: 10px; }
+  .marqueeTrack span b { color: var(--gold); font-weight: 500; }
 
   main { position: relative; z-index: 3; max-width: 1180px; margin: 0 auto; padding: 0 32px; }
   section { padding: 100px 0; border-top: 1px solid rgba(255,255,255,0.045); }
-  section:first-of-type { border-top: none; }
-  section .eyebrowSmall {
-    text-align: center; font-family: var(--mono); font-size: 11.5px; font-weight: 500; color: var(--gold);
-    letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 14px;
-  }
-  section h2 { font-family: var(--serif); font-weight: 600; font-size: 34px; text-align: center; margin-bottom: 14px; letter-spacing: -0.6px; color: var(--ink); }
+  section .eyebrowSmall { text-align: center; font-family: var(--mono); font-size: 11.5px; font-weight: 500; color: var(--gold); letter-spacing: 1.4px; text-transform: uppercase; margin-bottom: 14px; }
+  section h2 { font-family: var(--serif); font-weight: 600; font-size: 34px; text-align: center; margin-bottom: 14px; letter-spacing: -0.6px; }
   section .sectionSub { text-align: center; color: var(--inkMuted); font-size: 15px; max-width: 560px; margin: 0 auto 56px; }
 
-  .promoBanner {
-    background: linear-gradient(135deg, rgba(203,164,104,0.1), rgba(203,164,104,0.03));
-    border: 1px solid var(--border);
-    border-radius: 16px; padding: 18px 26px; text-align: center;
-    font-size: 14px; color: var(--ink); max-width: 700px; margin: -24px auto 46px;
-    line-height: 1.65;
-  }
+  .promoBanner { background: linear-gradient(135deg, rgba(203,164,104,0.1), rgba(203,164,104,0.03)); border: 1px solid var(--border); border-radius: 16px; padding: 18px 26px; text-align: center; font-size: 14px; max-width: 720px; margin: -24px auto 46px; line-height: 1.65; }
   .promoBanner strong { color: var(--goldBright); }
 
-  /* ---- Problem / Solution ---- */
-  .pvsGrid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-  @media (max-width: 760px) { .pvsGrid { grid-template-columns: 1fr; } }
-  .pvsCard { border-radius: 20px; padding: 34px; }
-  .pvsCard.problem { background: rgba(201,80,46,0.05); border: 1px solid rgba(201,80,46,0.22); }
-  .pvsCard.solution { background: linear-gradient(180deg, rgba(203,164,104,0.08), rgba(203,164,104,0.01)); border: 1px solid var(--border); }
-  .pvsCard h3 { font-family: var(--mono); font-size: 12.5px; margin-bottom: 20px; letter-spacing: 1px; text-transform: uppercase; }
-  .pvsCard.problem h3 { color: #e07a5f; }
-  .pvsCard.solution h3 { color: var(--goldBright); }
-  .pvsCard ul { list-style: none; }
-  .pvsCard li { font-size: 14.5px; padding: 9px 0; color: var(--inkMuted); }
-  .pvsCard.problem li::before { content: "✕  "; color: #e07a5f; font-weight: 700; }
-  .pvsCard.solution li::before { content: "✓  "; color: var(--gold); font-weight: 700; }
+  /* ---- Problem/Solution toggle (interactive) ---- */
+  .toggleStage { max-width: 720px; margin: 0 auto; }
+  .toggleSwitchRow { display: flex; justify-content: center; gap: 4px; margin-bottom: 36px; background: var(--card); border: 1px solid var(--cardBorder); border-radius: 30px; padding: 5px; width: fit-content; margin-left: auto; margin-right: auto; }
+  .toggleSwitchRow button { font-family: var(--sans); font-size: 13px; font-weight: 600; padding: 10px 22px; border-radius: 24px; border: none; background: transparent; color: var(--inkMuted); cursor: pointer; transition: background .25s ease, color .25s ease; }
+  .toggleSwitchRow button.active { background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #100b03; }
+  .toggleStage .pane { display: none; }
+  .toggleStage .pane.active { display: block; animation: fadeSwap .4s ease; }
+  @keyframes fadeSwap { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  .toggleStage ul { list-style: none; border: 1px solid var(--cardBorder); border-radius: 18px; overflow: hidden; }
+  .toggleStage li { font-size: 14.5px; padding: 16px 22px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+  .toggleStage li:last-child { border-bottom: none; }
+  .toggleStage .pane.without li { color: var(--inkMuted); }
+  .toggleStage .pane.without li::before { content: "✕  "; color: #c9573f; font-weight: 700; }
+  .toggleStage .pane.with li { color: var(--ink); background: rgba(203,164,104,0.03); }
+  .toggleStage .pane.with li::before { content: "✓  "; color: var(--gold); font-weight: 700; }
 
   /* ---- Services ---- */
   .servicesGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
-  .serviceCard {
-    background: var(--card); border: 1px solid var(--cardBorder); border-radius: 18px;
-    padding: 30px 26px; transition: border-color .25s ease, background .25s ease, transform .25s ease;
-  }
-  .serviceCard:hover { border-color: var(--border); background: var(--cardHover); transform: translateY(-4px); }
-  .serviceCard .icon {
-    width: 46px; height: 46px; border-radius: 12px; background: var(--goldSoft);
-    display: flex; align-items: center; justify-content: center; font-size: 21px; margin-bottom: 20px;
-  }
-  .serviceCard h3 { font-family: var(--serif); font-weight: 600; font-size: 17px; margin-bottom: 10px; color: var(--ink); }
+  .serviceCard { background: var(--card); border: 1px solid var(--cardBorder); border-radius: 18px; padding: 30px 26px; transition: border-color .25s ease, background .25s ease, transform .3s ease; transform-style: preserve-3d; will-change: transform; }
+  .serviceCard:hover { border-color: var(--border); background: var(--cardHover); }
+  .serviceCard .icon { width: 46px; height: 46px; border-radius: 12px; background: var(--goldSoft); display: flex; align-items: center; justify-content: center; font-size: 21px; margin-bottom: 20px; }
+  .serviceCard h3 { font-family: var(--serif); font-weight: 600; font-size: 17px; margin-bottom: 10px; }
   .serviceCard p { font-size: 13.5px; color: var(--inkMuted); line-height: 1.65; }
   .serviceCard .tag { display:inline-block; margin-top: 14px; font-family: var(--mono); font-size: 10.5px; color: var(--gold); border: 1px solid var(--border); padding: 3px 9px; border-radius: 8px; letter-spacing: .4px; }
 
   /* ---- Dashboard preview ---- */
-  .dashWrap {
-    background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01));
-    border: 1px solid var(--cardBorder); border-radius: 24px; padding: 10px; box-shadow: 0 40px 90px rgba(0,0,0,0.5);
-  }
+  .dashWrap { background: linear-gradient(180deg, rgba(255,255,255,0.035), rgba(255,255,255,0.01)); border: 1px solid var(--cardBorder); border-radius: 24px; padding: 10px; box-shadow: 0 40px 90px rgba(0,0,0,0.5); }
   .dashTabs { display:flex; gap: 6px; padding: 10px 10px 0; flex-wrap: wrap; }
-  .dashTab {
-    font-family: var(--mono); font-size: 12px; color: var(--inkMuted); background: transparent; border: 1px solid transparent;
-    padding: 10px 16px; border-radius: 10px 10px 0 0; cursor: pointer; letter-spacing: .3px;
-  }
+  .dashTab { font-family: var(--mono); font-size: 12px; color: var(--inkMuted); background: transparent; border: 1px solid transparent; padding: 10px 16px; border-radius: 10px 10px 0 0; cursor: pointer; letter-spacing: .3px; }
   .dashTab.active { color: var(--goldBright); background: var(--bgElevated); border-color: var(--cardBorder); border-bottom-color: var(--bgElevated); }
   .dashBody { background: var(--bgElevated); border-radius: 14px; border: 1px solid var(--cardBorder); padding: 30px; min-height: 300px; }
-  .dashPane { display:none; animation: rise .4s ease; }
-  .dashPane.active { display:block; }
-  .dashPane h4 { font-family: var(--serif); font-size: 19px; margin-bottom: 6px; color: var(--ink); }
+  .dashPane { display:none; }
+  .dashPane.active { display:block; animation: fadeSwap .4s ease; }
+  .dashPane h4 { font-family: var(--serif); font-size: 19px; margin-bottom: 6px; }
   .dashPane .dashDesc { font-size: 13px; color: var(--inkMuted); margin-bottom: 22px; }
   .kwRow, .auditRow, .utmRow { display:flex; align-items:center; justify-content:space-between; padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13.5px; }
   .kwRow:last-child, .auditRow:last-child, .utmRow:last-child { border-bottom:none; }
-  .kwRow .kwName { color: var(--ink); }
   .kwRow .kwMeta { display:flex; gap: 18px; align-items:center; }
   .kwRow .kwMeta span { color: var(--inkFaint); font-family: var(--mono); font-size: 11.5px; }
   .pillUp { color:#8fd19e; font-family: var(--mono); font-size: 11.5px; }
   .pillDown { color:#e0836f; font-family: var(--mono); font-size: 11.5px; }
   .barTrack { width: 90px; height: 5px; border-radius: 4px; background: rgba(255,255,255,0.07); overflow:hidden; }
-  .barFill { height:100%; background: linear-gradient(90deg, var(--gold), var(--goldBright)); border-radius:4px; }
+  .barFill { height:100%; background: linear-gradient(90deg, var(--gold), var(--goldBright)); border-radius:4px; width: 0; transition: width 1s cubic-bezier(.16,.84,.44,1); }
   .configRow { display:flex; align-items:center; justify-content:space-between; padding: 14px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
   .configRow:last-child { border-bottom:none; }
-  .configRow .cfgLabel { font-size: 13.5px; color: var(--ink); }
+  .configRow .cfgLabel { font-size: 13.5px; }
   .configRow .cfgHint { font-size: 11.5px; color: var(--inkFaint); margin-top:2px; }
-  .toggle { width: 40px; height: 22px; border-radius: 20px; background: rgba(255,255,255,0.08); position:relative; cursor:pointer; border: 1px solid var(--cardBorder); }
-  .toggle.on { background: var(--goldSoft); border-color: var(--border); }
-  .toggle i { position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background: var(--inkFaint); transition: left .2s ease, background .2s ease; }
-  .toggle.on i { left: 20px; background: var(--goldBright); }
+  .toggleSwitch { width: 40px; height: 22px; border-radius: 20px; background: rgba(255,255,255,0.08); position:relative; cursor:pointer; border: 1px solid var(--cardBorder); }
+  .toggleSwitch.on { background: var(--goldSoft); border-color: var(--border); }
+  .toggleSwitch i { position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background: var(--inkFaint); transition: left .2s ease, background .2s ease; }
+  .toggleSwitch.on i { left: 20px; background: var(--goldBright); }
   .dashNote { margin-top: 24px; font-size: 12px; color: var(--inkFaint); text-align:center; }
 
-  /* ---- How it works ---- */
-  .stepsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 30px; }
-  .stepCard { text-align: left; padding-left: 4px; }
-  .stepCard .stepNum {
-    font-family: var(--serif); font-size: 30px; color: var(--goldSoft); font-weight: 600; margin-bottom: 14px;
-    -webkit-text-stroke: 1px var(--gold); color: transparent;
-  }
-  .stepCard h3 { font-family: var(--serif); font-weight: 600; font-size: 16.5px; margin-bottom: 8px; color: var(--ink); }
-  .stepCard p { font-size: 13.5px; color: var(--inkMuted); line-height: 1.6; }
+  /* ---- How it works: scroll-linked timeline ---- */
+  .timeline { position: relative; padding-left: 34px; }
+  .timeline::before { content:""; position:absolute; left: 7px; top: 6px; bottom: 6px; width: 2px; background: rgba(255,255,255,0.08); }
+  .timelineFill { position:absolute; left: 7px; top: 6px; width: 2px; background: linear-gradient(180deg, var(--gold), var(--goldBright)); height: 0%; transition: height .3s ease-out; }
+  .timelineStep { position: relative; padding-bottom: 44px; }
+  .timelineStep:last-child { padding-bottom: 0; }
+  .timelineStep::before { content: attr(data-n); position: absolute; left: -34px; top: -2px; width: 16px; height: 16px; border-radius: 50%; background: var(--bgElevated); border: 2px solid var(--inkFaint); display:flex; align-items:center; justify-content:center; font-family: var(--mono); font-size: 0; transition: border-color .3s ease, background .3s ease; }
+  .timelineStep.active::before { border-color: var(--gold); background: var(--gold); box-shadow: 0 0 10px rgba(var(--glow),.6); }
+  .timelineStep h3 { font-family: var(--serif); font-weight: 600; font-size: 18px; margin-bottom: 8px; }
+  .timelineStep p { font-size: 14px; color: var(--inkMuted); line-height: 1.6; max-width: 480px; }
+  .timelineStep .stepTag { font-family: var(--mono); font-size: 10.5px; color: var(--gold); letter-spacing: .5px; text-transform: uppercase; margin-bottom: 6px; display: block; }
 
-  /* ---- Why ---- */
-  .whyGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 26px 24px; }
-  .whyCard .icon { font-size: 22px; margin-bottom: 12px; }
-  .whyCard h3 { font-family: var(--serif); font-weight:600; font-size: 15px; margin-bottom: 7px; color: var(--ink); }
-  .whyCard p { font-size: 13px; color: var(--inkMuted); line-height: 1.6; }
+  /* ---- Why: bento grid ---- */
+  .bentoGrid { display: grid; grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(140px, auto); gap: 16px; }
+  @media (max-width: 900px) { .bentoGrid { grid-template-columns: repeat(2, 1fr); } }
+  @media (max-width: 560px) { .bentoGrid { grid-template-columns: 1fr; } }
+  .bentoCard { background: var(--card); border: 1px solid var(--cardBorder); border-radius: 18px; padding: 26px; display: flex; flex-direction: column; justify-content: flex-end; transition: border-color .25s ease, background .25s ease; }
+  .bentoCard:hover { border-color: var(--border); background: var(--cardHover); }
+  .bentoCard.wide { grid-column: span 2; }
+  .bentoCard.tall { grid-row: span 2; }
+  .bentoCard .icon { font-size: 22px; margin-bottom: 14px; }
+  .bentoCard h3 { font-family: var(--serif); font-weight:600; font-size: 16px; margin-bottom: 7px; }
+  .bentoCard p { font-size: 13px; color: var(--inkMuted); line-height: 1.6; }
 
   /* ---- Pricing ---- */
   .pricingGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: stretch; }
   @media (max-width: 900px) { .pricingGrid { grid-template-columns: 1fr; } }
-  .priceCard {
-    background: var(--card); border: 1px solid var(--cardBorder); border-radius: 20px;
-    padding: 32px 26px; display: flex; flex-direction: column; transition: transform .25s ease;
-  }
-  .priceCard.featured {
-    border: 1px solid var(--border); position: relative;
-    background: linear-gradient(180deg, rgba(203,164,104,0.1), rgba(203,164,104,0.02));
-    transform: scale(1.03); box-shadow: 0 30px 70px rgba(0,0,0,0.45);
-  }
-  .priceCard.featured::before {
-    content: "EVERYTHING INCLUDED"; position: absolute; top: -13px; left: 26px;
-    background: linear-gradient(135deg,var(--goldBright),var(--gold)); color: #170f04; font-family: var(--mono); font-size: 10px;
-    font-weight: 700; padding: 5px 12px; border-radius: 10px; letter-spacing: 0.6px;
-  }
+  .priceCard { background: var(--card); border: 1px solid var(--cardBorder); border-radius: 20px; padding: 32px 26px; display: flex; flex-direction: column; position: relative; }
+  .priceCard.featured { border: 1px solid var(--border); background: linear-gradient(180deg, rgba(203,164,104,0.1), rgba(203,164,104,0.02)); transform: scale(1.03); box-shadow: 0 30px 70px rgba(0,0,0,0.45); }
+  .priceCard.featured::before { content: "MOST POPULAR"; position: absolute; top: -13px; left: 26px; background: linear-gradient(135deg,var(--goldBright),var(--gold)); color: #170f04; font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 5px 12px; border-radius: 10px; letter-spacing: 0.6px; }
+  .priceCard .trialTag { position: absolute; top: -13px; right: 26px; background: var(--sage); color: #0b1409; font-family: var(--mono); font-size: 10px; font-weight: 700; padding: 5px 12px; border-radius: 10px; letter-spacing: 0.6px; }
   .priceCard .tag { font-family: var(--mono); font-size: 11px; font-weight: 500; color: var(--gold); text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
-  .priceCard h3 { font-family: var(--serif); font-weight:600; font-size: 19px; margin-bottom: 10px; color: var(--ink); }
-  .priceCard .price { font-family: var(--serif); font-size: 32px; font-weight: 600; margin: 12px 0 2px; color: var(--ink); }
-  .priceCard .priceNote { font-size: 12px; color: var(--inkFaint); margin-bottom: 24px; }
+  .priceCard h3 { font-family: var(--serif); font-weight:600; font-size: 19px; margin-bottom: 10px; }
+  .priceCard .price { font-family: var(--serif); font-size: 30px; font-weight: 600; margin: 10px 0 2px; }
+  .priceCard .priceNote { font-size: 12px; color: var(--inkFaint); margin-bottom: 20px; }
+  .priceCard .dashAccess { font-family: var(--mono); font-size: 11px; padding: 8px 12px; border-radius: 8px; margin-bottom: 20px; border: 1px solid var(--cardBorder); }
+  .priceCard .dashAccess.no { color: var(--inkMuted); }
+  .priceCard .dashAccess.yes { color: var(--goldBright); border-color: var(--border); background: var(--goldSoft); }
   .priceCard ul { list-style: none; margin-bottom: 26px; flex: 1; }
   .priceCard li { font-size: 13px; padding: 7px 0; color: var(--inkMuted); }
   .priceCard li::before { content: "✓  "; color: var(--gold); font-weight: 700; }
   .priceCard button { width: 100%; }
+  .pricingFooterNote { text-align: center; font-size: 12.5px; color: var(--inkFaint); margin-top: 30px; max-width: 620px; margin-left: auto; margin-right: auto; line-height: 1.7; }
+  .pricingFooterNote b { color: var(--inkMuted); }
 
-  /* ---- FAQ ---- */
-  .faqItem { border-bottom: 1px solid rgba(255,255,255,0.06); padding: 24px 0; }
-  .faqItem h3 { font-family: var(--serif); font-weight: 600; font-size: 16px; margin-bottom: 9px; color: var(--ink); }
-  .faqItem p { font-size: 13.5px; color: var(--inkMuted); line-height: 1.65; }
+  /* ---- FAQ accordion ---- */
+  .faqList { max-width: 720px; margin: 0 auto; }
+  .faqItem { border-bottom: 1px solid rgba(255,255,255,0.06); }
+  .faqQ { width: 100%; text-align: left; background: none; border: none; color: var(--ink); font-family: var(--serif); font-weight: 600; font-size: 16px; padding: 22px 0; cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+  .faqQ .plus { font-family: var(--mono); font-size: 18px; color: var(--gold); transition: transform .25s ease; flex-shrink: 0; }
+  .faqItem.open .faqQ .plus { transform: rotate(45deg); }
+  .faqA { max-height: 0; overflow: hidden; transition: max-height .35s ease; }
+  .faqA p { font-size: 13.5px; color: var(--inkMuted); line-height: 1.65; padding-bottom: 22px; max-width: 600px; }
 
   /* ---- Contact / Footer ---- */
-  .contactFooter { background: var(--dark); color: white; padding: 90px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.06); }
-  .contactFooter h2 { font-family: var(--serif); color: white; }
+  .contactFooter { background: var(--dark); padding: 90px 20px; text-align: center; border-top: 1px solid rgba(255,255,255,0.06); }
+  .contactFooter h2 { font-family: var(--serif); }
   .contactFooter p { color: rgba(255,255,255,0.5); max-width: 460px; margin: 0 auto 30px; font-size: 14.5px; }
-  .contactFooter .contactRow {
-    display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;
-    font-size: 13.5px; color: rgba(255,255,255,0.5); margin-top: 30px; font-family: var(--mono);
-  }
+  .contactFooter .contactRow { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; font-size: 13.5px; color: rgba(255,255,255,0.5); margin-top: 30px; font-family: var(--mono); }
   footer.credit { text-align: center; padding: 22px; font-size: 11px; color: var(--inkFaint); background: var(--dark); font-family: var(--mono); letter-spacing: .3px; }
 
   /* ---- Chat widget ---- */
-  #launcher {
-    position: fixed; bottom: 24px; right: 24px;
-    width: 60px; height: 60px; border-radius: 50%;
-    background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #150f04;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 24px; cursor: pointer; border: none;
-    box-shadow: 0 10px 30px rgba(var(--glow),0.45);
-    z-index: 9999; transition: transform .2s ease;
-  }
+  #launcher { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #150f04; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border: none; box-shadow: 0 10px 30px rgba(var(--glow),0.45); z-index: 9999; transition: transform .2s ease; }
   #launcher:hover { transform: scale(1.06); }
-  #panel {
-    position: fixed; bottom: 96px; right: 24px;
-    width: 360px; max-width: 92vw; height: 500px; max-height: 76vh;
-    background: #0e0f14; border: 1px solid var(--cardBorder); border-radius: 20px;
-    box-shadow: 0 24px 70px rgba(0,0,0,0.6);
-    display: none; flex-direction: column; overflow: hidden;
-    z-index: 9999; backdrop-filter: blur(20px);
-  }
+  #panel { position: fixed; bottom: 96px; right: 24px; width: 360px; max-width: 92vw; height: 500px; max-height: 76vh; background: #0e0f14; border: 1px solid var(--cardBorder); border-radius: 20px; box-shadow: 0 24px 70px rgba(0,0,0,0.6); display: none; flex-direction: column; overflow: hidden; z-index: 9999; backdrop-filter: blur(20px); }
   #panel.open { display: flex; }
-  #chatHeader { background: linear-gradient(135deg, rgba(203,164,104,0.16), rgba(203,164,104,0.03)); border-bottom: 1px solid var(--cardBorder); color: var(--ink); padding: 18px 20px; font-family: var(--serif); font-weight: 600; font-size: 16px; }
+  #chatHeader { background: linear-gradient(135deg, rgba(203,164,104,0.16), rgba(203,164,104,0.03)); border-bottom: 1px solid var(--cardBorder); padding: 18px 20px; font-family: var(--serif); font-weight: 600; font-size: 16px; }
   #chatHeader span { display: block; font-family: var(--sans); font-weight: 400; font-size: 11.5px; color: var(--inkMuted); margin-top: 4px; }
   #messages { flex: 1; overflow-y: auto; padding: 18px; display: flex; flex-direction: column; gap: 10px; }
   .msg { max-width: 82%; padding: 11px 15px; border-radius: 14px; font-size: 13.5px; line-height: 1.5; }
-  .msg.bot { background: rgba(255,255,255,0.05); border: 1px solid var(--cardBorder); color: var(--ink); align-self: flex-start; border-bottom-left-radius: 4px; }
+  .msg.bot { background: rgba(255,255,255,0.05); border: 1px solid var(--cardBorder); align-self: flex-start; border-bottom-left-radius: 4px; }
   .msg.user { background: linear-gradient(135deg, var(--gold), #a9803f); color: #140d04; font-weight: 600; align-self: flex-end; border-bottom-right-radius: 4px; }
   .msg.error { background: rgba(201,80,46,0.12); color: #e79b87; align-self: flex-start; font-family: var(--mono); font-size: 11.5px; }
   .optionsRow { display: flex; flex-wrap: wrap; gap: 8px; padding: 0 18px 12px; }
@@ -341,8 +254,6 @@
 <body>
 
 <div class="noise"></div>
-<div id="cursorGlow"></div>
-<div id="cursorDot"></div>
 
 <nav>
   <div class="navBrand">Assist<span>Q</span></div>
@@ -353,59 +264,56 @@
     <a onclick="scrollToSection('pricingSection')">Pricing</a>
     <a onclick="scrollToSection('faqSection')">FAQ</a>
   </div>
-  <!--
-    CLIENT LOGIN LINK — points at your deployed dashboard app, NOT a file
-    on this site. The dashboard is a separate Node/Express app (deployed
-    on Railway) with its own login screen at its root URL.
-
-    Set this to:
-      - your Railway-provided URL for testing, e.g.
-        https://your-app-name.up.railway.app
-      - once you've added a custom subdomain in Railway + a CNAME record
-        at your DNS provider, switch it to that, e.g. https://app.assistq.in
-
-    See DATABASE_SETUP.md / the dashboard README for the domain setup steps.
-  -->
-  <a class="backLink" href="https://app.assistq.in" style="font-family:var(--mono); font-size:12px; color:var(--inkMuted); margin-right:18px;">Client Login</a>
-  <button class="navCta" id="navChatBtn">Talk to us</button>
+  <div class="navRight">
+    <!-- CLIENT LOGIN — points at the dashboard app's own login screen, a separate deployment. -->
+    <a class="backLink" href="https://app.assistq.in">Client Login</a>
+    <button class="navCta" id="navChatBtn">Talk to us</button>
+  </div>
 </nav>
 
 <header>
-  <div class="heroCopy">
-    <div class="eyebrow"><span class="dot"></span> AI Lead Qualification &amp; Conversion</div>
-    <h1>Stop losing leads to <em>slow replies</em> and empty forms</h1>
-    <p class="sub">AssistQ engages every visitor the moment they land, answers their questions, qualifies them, and delivers only the leads worth calling — straight to your inbox and WhatsApp, 24/7.</p>
-    <div class="heroBtns">
-      <button class="btnPrimary" id="heroChatBtn">See it in action</button>
-      <button class="btnSecondary" onclick="scrollToSection('pricingSection')">View Pricing</button>
+  <div class="eyebrow"><span class="dot"></span> AI Lead Qualification &amp; Conversion</div>
+  <h1>Watch a visitor become a <em>qualified lead</em> — right now.</h1>
+  <p class="sub">This is a live, real conversation — the same one your own visitors would have. AssistQ engages, qualifies, and scores every lead the moment they land, 24/7.</p>
+
+  <div class="demoStage">
+    <div class="demoCard">
+      <div class="demoHead"><div class="dots"><i></i><i></i><i></i></div><span><span class="liveDot"></span>ASSISTQ · LIVE DEMO</span></div>
+      <div id="demoMessages"></div>
+      <div class="demoScore" id="demoScore"><span>Lead score</span><span class="badge">HOT · 92</span></div>
     </div>
-    <div class="heroTrust">
-      <div class="stat"><b>48hrs</b><span>To go live</span></div>
-      <div class="stat"><b>24/7</b><span>Always engaging</span></div>
-      <div class="stat"><b>0</b><span>Missed leads</span></div>
-    </div>
+    <div class="demoCaption">↻ replays automatically — this is what your visitors experience</div>
   </div>
-  <div class="heroVisual">
-    <div class="floatChip c1">🔥 <b>Hot lead</b> scored</div>
-    <div class="floatChip c2">📊 Weekly report ready</div>
-    <div class="mockCard">
-      <div class="mockHead"><div class="dots"><i></i><i></i><i></i></div><span>ASSISTQ · LIVE</span></div>
-      <div class="mockBubble bot">Hi! Looking for a 2BHK or 3BHK, and what's your rough budget?</div>
-      <div class="mockBubble user">3BHK, around 85L, need it in 2 months</div>
-      <div class="mockBubble bot">Got it — I've noted your timeline. Can I grab your number so our team can call you today?</div>
-      <div class="mockScore"><span>Lead score</span><span class="badge">HOT · 92</span></div>
-    </div>
+
+  <div class="heroBtns">
+    <button class="btnPrimary" id="heroChatBtn">Chat with AssistQ yourself</button>
+    <button class="btnSecondary" onclick="scrollToSection('pricingSection')">View Pricing</button>
   </div>
 </header>
 
+<div class="marqueeWrap">
+  <div class="marqueeTrack" id="marqueeTrack">
+    <span>Built for local businesses that live on inbound leads</span>
+    <span>·</span><span><b>Real Estate</b></span>
+    <span>·</span><span><b>Clinics</b></span>
+    <span>·</span><span><b>Salons &amp; Studios</b></span>
+    <span>·</span><span><b>Home Services</b></span>
+    <span>·</span><span><b>Consultants</b></span>
+    <span>·</span><span><b>Coaching &amp; Education</b></span>
+  </div>
+</div>
+
 <main>
-  <section id="problemSection">
+  <section id="problemSection" class="reveal">
     <div class="eyebrowSmall">The Problem</div>
     <h2>Most businesses are losing leads without knowing it</h2>
-    <div class="sectionSub">Here's what typically happens — and what changes once AssistQ is in place.</div>
-    <div class="pvsGrid">
-      <div class="pvsCard problem">
-        <h3>Without AssistQ</h3>
+    <div class="sectionSub">See what changes once AssistQ is in place.</div>
+    <div class="toggleStage">
+      <div class="toggleSwitchRow">
+        <button class="pToggleBtn active" data-pane="without">Without AssistQ</button>
+        <button class="pToggleBtn" data-pane="with">With AssistQ</button>
+      </div>
+      <div class="pane without active">
         <ul>
           <li>Inquiries go unanswered for hours, sometimes overnight</li>
           <li>Contact forms collect names but no real context</li>
@@ -414,8 +322,7 @@
           <li>Follow-up depends entirely on someone remembering to do it</li>
         </ul>
       </div>
-      <div class="pvsCard solution">
-        <h3>With AssistQ</h3>
+      <div class="pane with">
         <ul>
           <li>Every visitor gets an instant, intelligent response — any time of day</li>
           <li>Conversations capture real context: budget, timeline, intent</li>
@@ -427,21 +334,21 @@
     </div>
   </section>
 
-  <section id="servicesSection">
+  <section id="servicesSection" class="reveal">
     <div class="eyebrowSmall">What We Offer</div>
     <h2>Three ways we help you convert more of your traffic</h2>
     <div class="sectionSub">Every service is fully managed by us — pick what fits your business today.</div>
-    <div class="servicesGrid">
+    <div class="servicesGrid" id="tiltGrid">
       <div class="serviceCard">
         <div class="icon">💬</div>
-        <h3>AI Chatbot Suite</h3>
-        <p>A conversational AI that qualifies every visitor, answers questions from your FAQ, remembers context, and includes ongoing SEO growth plus your own management dashboard.</p>
-        <span class="tag">MOST COMPLETE</span>
+        <h3>AI Chatbot</h3>
+        <p>A conversational AI that qualifies every visitor, answers questions from your FAQ, remembers context, and scores every lead automatically — on your site or a page we host for you.</p>
+        <span class="tag">CORE PRODUCT</span>
       </div>
       <div class="serviceCard">
-        <div class="icon">📝</div>
-        <h3>Smart Form</h3>
-        <p>A lighter, structured lead-capture form for businesses that want simple, reliable capture without a full conversational layer.</p>
+        <div class="icon">📊</div>
+        <h3>Growth Dashboard</h3>
+        <p>Leads, conversations, SEO audits, keyword tracking and UTM analytics in one login — included from the Growth plan up.</p>
       </div>
       <div class="serviceCard">
         <div class="icon">🔍</div>
@@ -451,8 +358,8 @@
     </div>
   </section>
 
-  <section id="dashboardSection">
-    <div class="eyebrowSmall">Included With Every Chatbot Suite</div>
+  <section id="dashboardSection" class="reveal">
+    <div class="eyebrowSmall">Included From Growth</div>
     <h2>Your own dashboard — keywords, audits, UTM, and chatbot config</h2>
     <div class="sectionSub">One login to see how your leads are performing and tune everything, without waiting on us.</div>
     <div class="dashWrap">
@@ -474,10 +381,10 @@
         <div class="dashPane" id="pane-audit">
           <h4>SEO health</h4>
           <p class="dashDesc">A running score of the technical items we monitor and fix every month.</p>
-          <div class="auditRow"><span>Page speed</span><div class="barTrack"><div class="barFill" style="width:78%"></div></div></div>
-          <div class="auditRow"><span>Meta &amp; title coverage</span><div class="barTrack"><div class="barFill" style="width:94%"></div></div></div>
-          <div class="auditRow"><span>Mobile usability</span><div class="barTrack"><div class="barFill" style="width:88%"></div></div></div>
-          <div class="auditRow"><span>Broken links</span><div class="barTrack"><div class="barFill" style="width:99%"></div></div></div>
+          <div class="auditRow"><span>Page speed</span><div class="barTrack"><div class="barFill" data-w="78"></div></div></div>
+          <div class="auditRow"><span>Meta &amp; title coverage</span><div class="barTrack"><div class="barFill" data-w="94"></div></div></div>
+          <div class="auditRow"><span>Mobile usability</span><div class="barTrack"><div class="barFill" data-w="88"></div></div></div>
+          <div class="auditRow"><span>Broken links</span><div class="barTrack"><div class="barFill" data-w="99"></div></div></div>
         </div>
         <div class="dashPane" id="pane-utm">
           <h4>Traffic sources</h4>
@@ -489,115 +396,127 @@
         <div class="dashPane" id="pane-config">
           <h4>Chatbot configuration</h4>
           <p class="dashDesc">Edit greetings, qualifying questions, and handoff rules — no code, no waiting on us.</p>
-          <div class="configRow"><div><div class="cfgLabel">Auto-notify on hot leads</div><div class="cfgHint">Send instantly to email + WhatsApp</div></div><div class="toggle on"><i></i></div></div>
-          <div class="configRow"><div><div class="cfgLabel">After-hours greeting</div><div class="cfgHint">Different opener outside business hours</div></div><div class="toggle on"><i></i></div></div>
-          <div class="configRow"><div><div class="cfgLabel">Collect budget upfront</div><div class="cfgHint">Ask budget as the second question</div></div><div class="toggle"><i></i></div></div>
+          <div class="configRow"><div><div class="cfgLabel">Auto-notify on hot leads</div><div class="cfgHint">Send instantly to email + WhatsApp</div></div><div class="toggleSwitch on"><i></i></div></div>
+          <div class="configRow"><div><div class="cfgLabel">After-hours greeting</div><div class="cfgHint">Different opener outside business hours</div></div><div class="toggleSwitch on"><i></i></div></div>
+          <div class="configRow"><div><div class="cfgLabel">Collect budget upfront</div><div class="cfgHint">Ask budget as the second question</div></div><div class="toggleSwitch"><i></i></div></div>
         </div>
       </div>
-      <div class="dashNote">Preview only — your live dashboard is provisioned when the Chatbot Suite goes live.</div>
+      <div class="dashNote">Preview only — your live dashboard is provisioned when your plan goes live.</div>
     </div>
   </section>
 
-  <section id="howSection">
+  <section id="howSection" class="reveal">
     <div class="eyebrowSmall">How It Works</div>
     <h2>Live in 48 hours, fully managed after that</h2>
-    <div class="stepsGrid">
-      <div class="stepCard"><div class="stepNum">01</div><h3>We Learn Your Business</h3><p>A short conversation about your questions, your FAQ, and what a qualified lead looks like for you.</p></div>
-      <div class="stepCard"><div class="stepNum">02</div><h3>We Build &amp; Deploy</h3><p>Your chatbot goes live on your site or a shareable link, with your dashboard provisioned alongside it.</p></div>
-      <div class="stepCard"><div class="stepNum">03</div><h3>Leads Start Flowing</h3><p>Every qualified lead is scored and delivered instantly by email and WhatsApp, logged automatically.</p></div>
-      <div class="stepCard"><div class="stepNum">04</div><h3>You Track &amp; We Refine</h3><p>Watch keywords, audits, and UTM performance live in your dashboard while we tune the setup behind the scenes.</p></div>
+    <div class="timeline" id="timeline">
+      <div class="timelineFill" id="timelineFill"></div>
+      <div class="timelineStep" data-n="1"><span class="stepTag">Step 1</span><h3>We learn your business</h3><p>A short conversation about your questions, your FAQ, and what a qualified lead looks like for you.</p></div>
+      <div class="timelineStep" data-n="2"><span class="stepTag">Step 2</span><h3>We build &amp; deploy</h3><p>Your chatbot goes live — on your own site as a bubble, or on a page we design and host for you.</p></div>
+      <div class="timelineStep" data-n="3"><span class="stepTag">Step 3</span><h3>Leads start flowing</h3><p>Every qualified lead is scored and delivered instantly by email and WhatsApp, logged automatically.</p></div>
+      <div class="timelineStep" data-n="4"><span class="stepTag">Step 4</span><h3>You track &amp; we refine</h3><p>Growth and Premium plans watch keywords, audits, and UTM performance live in the dashboard while we tune the setup behind the scenes.</p></div>
     </div>
   </section>
 
-  <section id="whySection">
+  <section id="whySection" class="reveal">
     <div class="eyebrowSmall">Why AssistQ</div>
     <h2>Built specifically for how leads are actually lost</h2>
-    <div class="whyGrid">
-      <div class="whyCard"><div class="icon">⚡</div><h3>Fast Setup</h3><p>Live within 48 hours — no long onboarding process.</p></div>
-      <div class="whyCard"><div class="icon">🌙</div><h3>Never Off the Clock</h3><p>Engages visitors around the clock, including evenings and weekends.</p></div>
-      <div class="whyCard"><div class="icon">🎯</div><h3>Genuinely Qualified Leads</h3><p>Every lead is scored, so you're not guessing who's serious.</p></div>
-      <div class="whyCard"><div class="icon">🖥️</div><h3>Your Own Dashboard</h3><p>Keywords, audits, UTM and chatbot config — always visible, always in your hands.</p></div>
-      <div class="whyCard"><div class="icon">🛠️</div><h3>Fully Managed</h3><p>We handle setup, hosting, and maintenance — you just receive the leads.</p></div>
-      <div class="whyCard"><div class="icon">🤝</div><h3>No Lock-In Pressure</h3><p>Straightforward monthly pricing, no long contracts, no hidden fees.</p></div>
+    <div class="bentoGrid">
+      <div class="bentoCard wide"><div class="icon">⚡</div><h3>Fast Setup</h3><p>Live within 48 hours of our first conversation — no long onboarding process.</p></div>
+      <div class="bentoCard tall"><div class="icon">🌙</div><h3>Never Off the Clock</h3><p>Engages visitors around the clock, including evenings and weekends — while you sleep.</p></div>
+      <div class="bentoCard"><div class="icon">🎯</div><h3>Genuinely Qualified</h3><p>Every lead is scored, so you're not guessing who's serious.</p></div>
+      <div class="bentoCard"><div class="icon">🛠️</div><h3>Fully Managed</h3><p>We handle setup, hosting, and maintenance — you just receive the leads.</p></div>
+      <div class="bentoCard wide"><div class="icon">🖥️</div><h3>Your Own Dashboard</h3><p>Growth and Premium clients get keywords, audits, UTM and chatbot config — always visible, always in your hands.</p></div>
+      <div class="bentoCard"><div class="icon">🤝</div><h3>No Lock-In Pressure</h3><p>Straightforward monthly pricing, cancel anytime.</p></div>
     </div>
   </section>
 
-  <section id="pricingSection">
+  <section id="pricingSection" class="reveal">
     <div class="eyebrowSmall">Pricing</div>
     <h2>Simple, transparent pricing</h2>
     <div class="sectionSub">No hidden fees. Cancel anytime.</div>
     <div class="promoBanner">
-      🚀 <strong>Founding Client Program:</strong> Work directly with our team as we roll out AssistQ — get a 15-day risk-free trial (setup fee only) and pricing locked in at our founding rate.
+      🚀 <strong>Foundation Offer:</strong> we're onboarding our first clients at a locked-in founding rate — the prices below are already discounted from what Starter, Growth and Premium will cost once the offer ends.
     </div>
     <div class="pricingGrid">
       <div class="priceCard">
-        <div class="tag">Free</div>
-        <h3>Digital Audit</h3>
-        <div class="price">₹0</div>
-        <div class="priceNote">One-time, no obligation</div>
-        <ul>
-          <li>Full review of your current lead capture</li>
-          <li>Specific, actionable findings</li>
-          <li>Delivered within 24 hours</li>
-        </ul>
-        <button class="btnSecondary" onclick="scrollToSection('contactSection')">Request Audit</button>
-      </div>
-      <div class="priceCard">
+        <span class="trialTag">15-DAY FREE TRIAL</span>
         <div class="tag">Starter</div>
-        <h3>Smart Form</h3>
-        <div class="price">₹1,999</div>
-        <div class="priceNote">setup + ₹2,999/month</div>
+        <h3>Chatbot Only</h3>
+        <div class="price">₹999<span style="font-size:13px;color:var(--inkFaint);">/mo</span></div>
+        <div class="priceNote">+ ₹1,999 one-time setup</div>
+        <div class="dashAccess no">✕ No dashboard access</div>
         <ul>
-          <li>Structured lead capture form</li>
-          <li>Sheets + email delivery</li>
-          <li>WhatsApp notification link</li>
+          <li>AI chatbot qualifies every visitor</li>
+          <li>Instant lead delivery — email + WhatsApp</li>
+          <li>Weekly performance summary by email</li>
+          <li>15-day free trial — setup fee only to start</li>
         </ul>
-        <button class="btnSecondary" onclick="window.location.href='payment.html?plan=starter'">Get Started</button>
+        <button class="btnSecondary" onclick="window.location.href='payment.html?plan=starter'">Start Free Trial</button>
       </div>
       <div class="priceCard featured">
-        <div class="tag">Complete · Founding Offer</div>
-        <h3>AI Chatbot Suite</h3>
-        <div class="price">₹5,999</div>
-        <div class="priceNote">setup + ₹7,999/month</div>
+        <div class="tag">Growth</div>
+        <h3>Chatbot + Dashboard</h3>
+        <div class="price">₹3,499<span style="font-size:13px;color:var(--inkFaint);">/mo</span></div>
+        <div class="priceNote">+ ₹2,999 one-time setup</div>
+        <div class="dashAccess yes">✓ Full dashboard access</div>
         <ul>
-          <li>Full conversational AI qualification</li>
+          <li>Everything in Starter</li>
+          <li>SEO audits, keyword tracking, UTM analytics</li>
+          <li>Sales pipeline, site visits, testimonials, document vault</li>
           <li>Lead scoring — Hot / Warm / Cold</li>
-          <li>SEO growth: audits + ongoing fixes, included</li>
-          <li>Your own dashboard — keywords, audits, UTM, config</li>
-          <li>Weekly AI-generated performance report</li>
-          <li>15-day risk-free trial, founding rate locked in</li>
         </ul>
-        <button class="btnPrimary" onclick="window.location.href='payment.html?plan=suite'">Get Started</button>
+        <button class="btnPrimary" onclick="window.location.href='payment.html?plan=growth'">Get Started</button>
+      </div>
+      <div class="priceCard">
+        <div class="tag">Premium</div>
+        <h3>Full CRM Suite</h3>
+        <div class="price">₹6,999<span style="font-size:13px;color:var(--inkFaint);">/mo</span></div>
+        <div class="priceNote">+ ₹4,999 one-time setup</div>
+        <div class="dashAccess yes">✓ Full dashboard access</div>
+        <ul>
+          <li>Everything in Growth</li>
+          <li>Full team &amp; project inventory management</li>
+          <li>Automation, marketing ROI, channel partners</li>
+          <li>Commission &amp; possession tracking, RERA QA</li>
+        </ul>
+        <button class="btnSecondary" onclick="window.location.href='payment.html?plan=premium'">Get Started</button>
       </div>
     </div>
+    <p class="pricingFooterNote">Already have a website? The chatbot bubble is included at no extra cost on every plan. <b>Don't have a website?</b> We'll design and host a branded landing page for you — a one-time website charge of ₹2,999 applies, regardless of plan. The 15-day free trial applies to the Starter plan only.</p>
   </section>
 
-  <section id="faqSection">
+  <section id="faqSection" class="reveal">
     <div class="eyebrowSmall">FAQ</div>
     <h2>Questions we hear most</h2>
-    <div class="faqItem">
-      <h3>How is this different from a contact form?</h3>
-      <p>A form just collects data — AssistQ actually has a conversation, answers questions in real time, and only sends you leads once they're genuinely qualified. Higher-quality leads, fewer people abandoning the page.</p>
-    </div>
-    <div class="faqItem">
-      <h3>Can I get SEO Growth on its own?</h3>
-      <p>SEO Growth now ships bundled inside the AI Chatbot Suite rather than as a standalone plan — so audits, monthly fixes, and reporting are already included the moment your chatbot goes live, at one combined price.</p>
-    </div>
-    <div class="faqItem">
-      <h3>What's in the dashboard?</h3>
-      <p>Every Chatbot Suite client gets a login to track keyword rankings, review SEO audit scores, see which UTM sources bring hot leads, and edit your chatbot's greeting and qualifying questions — all without waiting on us.</p>
-    </div>
-    <div class="faqItem">
-      <h3>What happens after I get a lead?</h3>
-      <p>You're notified instantly by email with a one-tap WhatsApp link, so you can follow up the moment someone's interested — no waiting, no missed opportunities.</p>
-    </div>
-    <div class="faqItem">
-      <h3>How fast can you set this up?</h3>
-      <p>Typically within 48 hours of our initial conversation about your business and FAQ content.</p>
-    </div>
-    <div class="faqItem">
-      <h3>What's the Founding Client Program?</h3>
-      <p>We're onboarding a small number of founding clients as we roll out AssistQ, with direct, hands-on attention from our team. You pay only the setup fee to start; if it's not the right fit within 15 days, there's no monthly charge — no questions asked. Continue past that, and your rate is locked in at the founding price.</p>
+    <div class="faqList" id="faqList">
+      <div class="faqItem">
+        <button class="faqQ">How is this different from a contact form?<span class="plus">+</span></button>
+        <div class="faqA"><p>A form just collects data — AssistQ actually has a conversation, answers questions in real time, and only sends you leads once they're genuinely qualified. Higher-quality leads, fewer people abandoning the page.</p></div>
+      </div>
+      <div class="faqItem">
+        <button class="faqQ">What's the difference between the three plans?<span class="plus">+</span></button>
+        <div class="faqA"><p>Every plan includes the AI chatbot and instant lead delivery. Starter is chatbot-only — no dashboard login, your leads arrive by WhatsApp and email. Growth adds full dashboard access with SEO, keyword and UTM tracking plus core sales pipeline tools. Premium adds full CRM depth: team management, automation, commissions and possession tracking.</p></div>
+      </div>
+      <div class="faqItem">
+        <button class="faqQ">Does the free trial apply to every plan?<span class="plus">+</span></button>
+        <div class="faqA"><p>No — the 15-day free trial is available on the Starter plan only. You pay the one-time setup fee to begin, and if it's not the right fit within 15 days, there's no monthly charge. Growth and Premium start billing from day one.</p></div>
+      </div>
+      <div class="faqItem">
+        <button class="faqQ">I don't have a website — can I still use AssistQ?<span class="plus">+</span></button>
+        <div class="faqA"><p>Yes. We'll design and host a branded landing page for your business with the chatbot built in, so you have a professional web presence and lead capture in one. This carries a one-time website charge of ₹2,999 on top of your plan's setup fee.</p></div>
+      </div>
+      <div class="faqItem">
+        <button class="faqQ">What happens after I get a lead?<span class="plus">+</span></button>
+        <div class="faqA"><p>You're notified instantly by email with a one-tap WhatsApp link, so you can follow up the moment someone's interested — no waiting, no missed opportunities.</p></div>
+      </div>
+      <div class="faqItem">
+        <button class="faqQ">How fast can you set this up?<span class="plus">+</span></button>
+        <div class="faqA"><p>Typically within 48 hours of our initial conversation about your business and FAQ content.</p></div>
+      </div>
+      <div class="faqItem">
+        <button class="faqQ">What's the Foundation Offer?<span class="plus">+</span></button>
+        <div class="faqA"><p>We're onboarding a small number of founding clients as we roll out AssistQ, with direct, hands-on attention from our team. The prices shown are already discounted from what each plan will cost once this offer ends — and your rate is locked in for as long as you stay subscribed.</p></div>
+      </div>
     </div>
   </section>
 </main>
@@ -607,8 +526,8 @@
   <p>Chat with our AI assistant right now to see exactly how it works, or reach out directly — we'll get back to you fast.</p>
   <button class="btnPrimary" id="footerChatBtn">Start a Conversation</button>
   <div class="contactRow" id="contactRow">
-    <span>+91 00000 00000</span>
-    <span>hello@assistq.in</span>
+    <span>+91 8446242738</span>
+    <span>assistq1@gmail.com</span>
   </div>
 </div>
 
@@ -630,18 +549,71 @@
 </div>
 
 <script>
-// ============ CURSOR GLOW + MAGNETIC CURSOR ============
-const glow = document.getElementById('cursorGlow');
-const dot = document.getElementById('cursorDot');
-window.addEventListener('mousemove', (e) => {
-  glow.style.setProperty('--x', e.clientX + 'px');
-  glow.style.setProperty('--y', e.clientY + 'px');
-  dot.style.left = e.clientX + 'px';
-  dot.style.top = e.clientY + 'px';
+// ============ SCROLL REVEAL ============
+const revealEls = document.querySelectorAll('.reveal');
+const revealObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); revealObserver.unobserve(e.target); } });
+}, { threshold: 0.12 });
+revealEls.forEach(el => revealObserver.observe(el));
+
+// ============ LIVE-TYPING HERO DEMO (the signature element) ============
+const demoScript = [
+  { sender: 'bot', text: "Hi! Looking for a 2BHK or 3BHK, and what's your rough budget?" },
+  { sender: 'user', text: "3BHK, around 85L, need it in 2 months" },
+  { sender: 'bot', text: "Got it — I've noted your timeline. Can I grab your number so our team can call you today?" },
+  { sender: 'user', text: "Sure, it's 98XXXXXX10" }
+];
+const demoMessages = document.getElementById('demoMessages');
+const demoScoreEl = document.getElementById('demoScore');
+
+function typeDelay(text) { return Math.min(1400, 500 + text.length * 22); }
+
+async function playDemo() {
+  demoMessages.innerHTML = '';
+  demoScoreEl.classList.remove('show');
+  await sleep(500);
+  for (const line of demoScript) {
+    const typing = document.createElement('div');
+    typing.className = 'demoBubble ' + line.sender;
+    typing.style.opacity = '1';
+    typing.innerHTML = '<span class="typingDots"><i></i><i></i><i></i></span>';
+    demoMessages.appendChild(typing);
+    demoMessages.scrollTop = demoMessages.scrollHeight;
+    await sleep(typeDelay(line.text) * 0.55);
+    typing.textContent = line.text;
+    await sleep(300);
+  }
+  await sleep(400);
+  demoScoreEl.classList.add('show');
+  await sleep(3200);
+  playDemo();
+}
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+playDemo();
+
+// ============ INDUSTRIES MARQUEE (duplicate track for seamless loop) ============
+const track = document.getElementById('marqueeTrack');
+track.innerHTML += track.innerHTML;
+
+// ============ PROBLEM/SOLUTION TOGGLE ============
+document.querySelectorAll('.pToggleBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.pToggleBtn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('.toggleStage .pane').forEach(p => p.classList.remove('active'));
+    document.querySelector('.toggleStage .pane.' + btn.dataset.pane).classList.add('active');
+  });
 });
-document.querySelectorAll('button, a, .dashTab, .toggle').forEach(el => {
-  el.addEventListener('mouseenter', () => dot.classList.add('hoverable'));
-  el.addEventListener('mouseleave', () => dot.classList.remove('hoverable'));
+
+// ============ SERVICE CARD TILT ============
+document.querySelectorAll('#tiltGrid .serviceCard').forEach(card => {
+  card.addEventListener('mousemove', (e) => {
+    const r = card.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    card.style.transform = `perspective(600px) rotateX(${-y * 6}deg) rotateY(${x * 6}deg) translateY(-4px)`;
+  });
+  card.addEventListener('mouseleave', () => { card.style.transform = ''; });
 });
 
 // ============ DASHBOARD PREVIEW TABS ============
@@ -650,14 +622,49 @@ document.querySelectorAll('.dashTab').forEach(tab => {
     document.querySelectorAll('.dashTab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.dashPane').forEach(p => p.classList.remove('active'));
     tab.classList.add('active');
-    document.getElementById('pane-' + tab.dataset.pane).classList.add('active');
+    const pane = document.getElementById('pane-' + tab.dataset.pane);
+    pane.classList.add('active');
+    pane.querySelectorAll('.barFill').forEach(b => { b.style.width = '0'; requestAnimationFrame(() => requestAnimationFrame(() => { b.style.width = b.dataset.w + '%'; })); });
   });
 });
-document.querySelectorAll('.toggle').forEach(tg => {
-  tg.addEventListener('click', () => tg.classList.toggle('on'));
+document.querySelectorAll('.toggleSwitch').forEach(tg => tg.addEventListener('click', () => tg.classList.toggle('on')));
+// Animate the first audit tab's bars in once visible
+const auditObserver = new IntersectionObserver((entries) => {
+  entries.forEach(e => { if (e.isIntersecting) { document.querySelectorAll('#pane-kw ~ .dashPane .barFill, .barFill').forEach(b => b.style.width = b.dataset.w + '%'); auditObserver.disconnect(); } });
+}, { threshold: 0.3 });
+auditObserver.observe(document.querySelector('.dashWrap'));
+
+// ============ SCROLL-LINKED TIMELINE ============
+const timelineSteps = document.querySelectorAll('.timelineStep');
+const timelineFill = document.getElementById('timelineFill');
+function updateTimeline() {
+  const timeline = document.getElementById('timeline');
+  const rect = timeline.getBoundingClientRect();
+  const vh = window.innerHeight;
+  const total = rect.height;
+  const progressed = Math.min(total, Math.max(0, vh * 0.75 - rect.top));
+  const pct = total ? (progressed / total) * 100 : 0;
+  timelineFill.style.height = pct + '%';
+  timelineSteps.forEach((step, i) => {
+    const stepTop = step.offsetTop;
+    step.classList.toggle('active', progressed >= stepTop);
+  });
+}
+window.addEventListener('scroll', updateTimeline, { passive: true });
+window.addEventListener('resize', updateTimeline);
+updateTimeline();
+
+// ============ FAQ ACCORDION ============
+document.querySelectorAll('.faqQ').forEach(q => {
+  q.addEventListener('click', () => {
+    const item = q.parentElement;
+    const wasOpen = item.classList.contains('open');
+    document.querySelectorAll('.faqItem').forEach(i => { i.classList.remove('open'); i.querySelector('.faqA').style.maxHeight = null; });
+    if (!wasOpen) { item.classList.add('open'); const a = item.querySelector('.faqA'); a.style.maxHeight = a.scrollHeight + 'px'; }
+  });
 });
 
-// ============ CONFIG ============
+// ============ CHAT WIDGET CONFIG ============
 // This bot qualifies PROSPECTIVE CLIENTS (business owners considering
 // hiring AssistQ) — NOT property buyers. Deploy a separate backend
 // for this using the same .gs pattern as your client bots, with these
@@ -671,10 +678,9 @@ const CONFIG = {
     { key: "phone", options: null },
     { key: "business_type", options: ["Real Estate", "Home Services", "Other"] },
     { key: "current_handling", options: null },
-    { key: "interest", options: ["Smart Form", "AI Chatbot Suite", "Not sure yet"] }
+    { key: "interest", options: ["Starter", "Growth", "Premium", "Not sure yet"] }
   ]
 };
-// ==================================
 
 let conversation = [];
 let knownFields = {};
@@ -682,11 +688,7 @@ let isComplete = false;
 const leadId = "lead_" + Date.now() + "_" + Math.random().toString(36).slice(2, 8);
 
 const urlParams = new URLSearchParams(window.location.search);
-const utm = {
-  source: urlParams.get("utm_source") || "",
-  medium: urlParams.get("utm_medium") || "",
-  campaign: urlParams.get("utm_campaign") || ""
-};
+const utm = { source: urlParams.get("utm_source") || "", medium: urlParams.get("utm_medium") || "", campaign: urlParams.get("utm_campaign") || "" };
 
 const launcher = document.getElementById("launcher");
 const panel = document.getElementById("panel");
@@ -698,28 +700,17 @@ const sendBtn = document.getElementById("sendBtn");
 async function openChat() {
   panel.classList.add("open");
   if (conversation.length === 0) {
-    // Pull the latest greeting/questions from the live bot (set from
-    // the client dashboard) before showing the first message, so
-    // dashboard edits take effect without redeploying this page.
-    // Falls back to the hardcoded CONFIG above if the fetch fails.
     try {
       const res = await fetch(CONFIG.webhookUrl, { method: "POST", body: JSON.stringify({ action: "get_public_config" }) });
       const data = await res.json();
-      if (data.status === "success") {
-        CONFIG.greeting = data.greeting;
-        CONFIG.questions = data.questions.map(q => ({ key: q.key, options: null }));
-      }
+      if (data.status === "success") { CONFIG.greeting = data.greeting; CONFIG.questions = data.questions.map(q => ({ key: q.key, options: null })); }
     } catch (err) { /* use hardcoded CONFIG defaults above */ }
-
     addMessage("bot", CONFIG.greeting);
     conversation.push({ role: "assistant", content: CONFIG.greeting });
     showOptionsIfAny();
   }
 }
-launcher.addEventListener("click", () => {
-  panel.classList.toggle("open");
-  if (panel.classList.contains("open")) openChat();
-});
+launcher.addEventListener("click", () => { panel.classList.toggle("open"); if (panel.classList.contains("open")) openChat(); });
 document.getElementById("heroChatBtn").addEventListener("click", openChat);
 document.getElementById("footerChatBtn").addEventListener("click", openChat);
 document.getElementById("navChatBtn").addEventListener("click", openChat);
@@ -755,74 +746,40 @@ function showOptionsIfAny() {
 async function sendMessage(optionText) {
   const text = optionText || textInput.value.trim();
   if (!text || isComplete) return;
-
   optionsContainer.innerHTML = "";
   addMessage("user", text);
   conversation.push({ role: "user", content: text });
   textInput.value = "";
   sendBtn.disabled = true;
   const typingEl = addMessage("bot", "...");
-
   try {
-    const res = await fetch(CONFIG.webhookUrl, {
-      method: "POST",
-      body: JSON.stringify({ action: "chat", leadId: leadId, messages: conversation, knownFields: knownFields })
-    });
+    const res = await fetch(CONFIG.webhookUrl, { method: "POST", body: JSON.stringify({ action: "chat", leadId: leadId, messages: conversation, knownFields: knownFields }) });
     const rawText = await res.text();
     let data;
-    try { data = JSON.parse(rawText); } catch (e) {
-      typingEl.remove();
-      addMessage("error", "Backend didn't return JSON: " + rawText.slice(0, 200));
-      sendBtn.disabled = false;
-      return;
-    }
-    if (data.status === "error") {
-      typingEl.remove();
-      addMessage("error", "Backend error: " + data.message);
-      sendBtn.disabled = false;
-      return;
-    }
+    try { data = JSON.parse(rawText); } catch (e) { typingEl.remove(); addMessage("error", "Backend didn't return JSON: " + rawText.slice(0, 200)); sendBtn.disabled = false; return; }
+    if (data.status === "error") { typingEl.remove(); addMessage("error", "Backend error: " + data.message); sendBtn.disabled = false; return; }
     typingEl.remove();
     addMessage("bot", data.reply);
     conversation.push({ role: "assistant", content: data.reply });
     knownFields = data.fields || knownFields;
-
-    if (data.complete && !isComplete) {
-      isComplete = true;
-      await submitLead();
-    } else {
-      showOptionsIfAny();
-    }
-  } catch (err) {
-    typingEl.remove();
-    addMessage("error", "Request failed: " + err.message);
-  }
+    if (data.complete && !isComplete) { isComplete = true; await submitLead(); } else { showOptionsIfAny(); }
+  } catch (err) { typingEl.remove(); addMessage("error", "Request failed: " + err.message); }
   sendBtn.disabled = false;
   textInput.focus();
 }
 
 async function submitLead() {
   try {
-    const res = await fetch(CONFIG.webhookUrl, {
-      method: "POST",
-      body: JSON.stringify({ action: "submit", leadId: leadId, fields: knownFields, utm: utm })
-    });
+    const res = await fetch(CONFIG.webhookUrl, { method: "POST", body: JSON.stringify({ action: "submit", leadId: leadId, fields: knownFields, utm: utm }) });
     const rawText = await res.text();
     let data;
     try { data = JSON.parse(rawText); } catch (e) { data = null; }
-    if (!data || data.status !== "success") {
-      addMessage("error", "Submit failed: " + (data ? data.message : rawText.slice(0, 200)));
-    } else {
-      addMessage("bot", "✅ Thanks! We'll be in touch shortly.");
-    }
-  } catch (err) {
-    addMessage("error", "Submit request failed: " + err.message);
-  }
+    if (!data || data.status !== "success") { addMessage("error", "Submit failed: " + (data ? data.message : rawText.slice(0, 200))); }
+    else { addMessage("bot", "✅ Thanks! We'll be in touch shortly."); }
+  } catch (err) { addMessage("error", "Submit request failed: " + err.message); }
 }
 
-function scrollToSection(id) {
-  document.getElementById(id).scrollIntoView({ behavior: "smooth", block: "start" });
-}
+function scrollToSection(id) { document.getElementById(id).scrollIntoView({ behavior: "smooth", block: "start" }); }
 </script>
 
 </body>

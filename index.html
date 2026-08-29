@@ -716,7 +716,7 @@ async function openChat() {
     try {
       const res = await fetch(CONFIG.webhookUrl, { method: "POST", body: JSON.stringify({ action: "get_public_config" }) });
       const data = await res.json();
-      if (data.status === "success") { CONFIG.greeting = data.greeting; CONFIG.questions = data.questions.map(q => ({ key: q.key, options: null })); }
+      if (data.status === "success") { CONFIG.greeting = data.greeting; CONFIG.questions = data.questions.map(q => ({ key: q.key, options: q.options || null })); }
     } catch (err) { /* use hardcoded CONFIG defaults above */ }
     addMessage("bot", CONFIG.greeting);
     conversation.push({ role: "assistant", content: CONFIG.greeting });

@@ -1,0 +1,7 @@
+# AssistQ — robots.txt
+User-agent: *
+Allow: /
+Disallow: /payment.html
+Disallow: /thank-you.html
+
+Sitemap: https://www.assistq.in/sitemap.xml

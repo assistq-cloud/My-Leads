@@ -1,0 +1,13 @@
+{
+  "name": "AssistQ",
+  "short_name": "AssistQ",
+  "description": "AI lead qualification chatbot for local businesses",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0a0906",
+  "theme_color": "#0a0906",
+  "icons": [
+    { "src": "./favicon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "./apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

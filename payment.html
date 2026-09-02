@@ -3,12 +3,35 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AssistQ — Subscribe</title>
+<title>Subscribe — AssistQ Plans &amp; Checkout</title>
+<meta name="description" content="Choose your AssistQ plan — Starter, Growth, or Premium — and start your subscription securely. Setup fee once, then simple monthly billing." />
+<link rel="canonical" href="https://www.assistq.in/payment.html" />
+<meta name="robots" content="noindex, follow" />
+<meta name="theme-color" content="#0a0906" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="AssistQ" />
+<meta property="og:title" content="Subscribe to AssistQ" />
+<meta property="og:description" content="Choose your plan and start your AssistQ subscription securely." />
+<meta property="og:url" content="https://www.assistq.in/payment.html" />
+<meta property="og:image" content="https://www.assistq.in/og-image.jpg" />
+<meta name="twitter:card" content="summary_large_image" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<!-- Razorpay checkout script. Swap for your gateway's SDK if you choose a different provider. -->
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- Razorpay checkout SDK is now loaded lazily on first click (see script below) instead of on every page load. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.assistq.in/" },
+    { "@type": "ListItem", "position": 2, "name": "Subscribe", "item": "https://www.assistq.in/payment.html" }
+  ]
+}
+</script>
 <style>
   :root {
     --bg: #0a0906; --bgElevated: #100e0a; --card: rgba(255,255,255,0.035);
@@ -20,14 +43,22 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--sans); background: var(--bg); color: var(--ink); min-height: 100vh; }
   a { color: var(--gold); text-decoration: none; }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
   nav { padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid var(--cardBorder); }
   .navBrand { font-family: var(--serif); font-weight:600; font-size:20px; }
   .navBrand span { color: var(--gold); }
   .backLink { font-family: var(--mono); font-size: 12.5px; color: var(--inkMuted); }
   .backLink:hover { color: var(--gold); }
 
-  .wrap { max-width: 980px; margin: 0 auto; padding: 60px 32px 100px; display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items:start; }
-  @media (max-width: 840px) { .wrap { grid-template-columns: 1fr; } }
+  .breadcrumbBar { max-width: 980px; margin: 0 auto; padding: 18px 32px 0; }
+  .breadcrumbBar ol { list-style:none; display:flex; flex-wrap:wrap; gap:6px; font-family: var(--mono); font-size: 11.5px; color: var(--inkFaint); }
+  .breadcrumbBar a { color: var(--inkMuted); text-decoration:none; }
+  .breadcrumbBar a:hover { color: var(--gold); }
+  .breadcrumbBar li[aria-current] { color: var(--gold); }
+  .breadcrumbBar li:not(:last-child)::after { content:"/"; margin-left:6px; color: var(--inkFaint); }
+
+  .wrap { max-width: 980px; margin: 0 auto; padding: 28px 32px 100px; display:grid; grid-template-columns: 1.1fr 0.9fr; gap: 40px; align-items:start; }
+  @media (max-width: 840px) { .wrap { grid-template-columns: 1fr; padding: 24px 20px 80px; } }
 
   .eyebrow { font-family: var(--mono); font-size: 11.5px; color: var(--gold); text-transform:uppercase; letter-spacing:1.4px; margin-bottom:14px; }
   h1 { font-family: var(--serif); font-weight:600; font-size: 32px; letter-spacing:-0.6px; margin-bottom: 10px; }
@@ -63,12 +94,11 @@
   .payBtn {
     width: 100%; margin-top: 26px; background: linear-gradient(135deg, var(--goldBright), var(--gold)); color: #150f04;
     border: none; padding: 16px; border-radius: 30px; font-size: 14.5px; font-weight: 700; cursor: pointer;
-    box-shadow: 0 12px 30px rgba(var(--glow),0.3);
+    box-shadow: 0 12px 30px rgba(var(--glow),0.3); transition: transform .2s ease;
   }
   .payBtn:hover { transform: translateY(-1px); }
   .trustNote { text-align:center; font-size: 11.5px; color: var(--inkFaint); margin-top: 14px; font-family: var(--mono); }
 
-  /* ---- summary ---- */
   .summaryCard { background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01)); border: 1px solid var(--cardBorder); border-radius: 20px; padding: 28px; position: sticky; top: 30px; }
   .summaryCard h3 { font-family: var(--serif); font-size: 17px; margin-bottom: 18px; }
   .sumRow { display:flex; justify-content:space-between; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.06); font-size: 13.5px; color: var(--inkMuted); }
@@ -81,60 +111,70 @@
   .dashNote { margin-top: 14px; font-size: 11.5px; color: var(--inkFaint); border-top: 1px solid rgba(255,255,255,0.06); padding-top: 14px; }
   .badgeRow { display:flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
   .badgeRow span { font-family: var(--mono); font-size: 10px; color: var(--inkFaint); border: 1px solid var(--cardBorder); padding: 5px 10px; border-radius: 8px; }
+  .siteFooter { text-align: center; padding: 26px 20px; font-size: 11px; color: var(--inkFaint); background: var(--dark); font-family: var(--mono); letter-spacing: .3px; border-top: 1px solid rgba(255,255,255,0.05); }
+  .siteFooter a { color: var(--inkMuted); }
+  .siteFooter a:hover { color: var(--gold); }
 </style>
 </head>
 <body>
 
-<nav>
+<nav aria-label="Primary">
   <div class="navBrand">Assist<span>Q</span></div>
   <a class="backLink" href="index.html">← Back to site</a>
 </nav>
 
-<div class="wrap">
+<div class="breadcrumbBar" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="index.html">Home</a></li>
+    <li aria-current="page">Subscribe</li>
+  </ol>
+</div>
+
+<main class="wrap">
   <div>
     <div class="eyebrow">Subscribe</div>
     <h1>Start your AssistQ subscription</h1>
     <p class="subCopy">Choose your plan, add a landing page if you need one, and pay securely. Your setup fee is charged once; the plan then renews automatically until you cancel.</p>
 
-    <div class="planGrid" id="planGrid">
-      <div class="planOption" data-plan="starter" data-setup="1999" data-monthly="999" data-trial="true">
+    <div class="planGrid" id="planGrid" role="radiogroup" aria-label="Choose a plan">
+      <div class="planOption" data-plan="starter" data-setup="1999" data-monthly="999" data-trial="true" role="radio" aria-checked="false" tabindex="0">
         <span class="trialBadge">15-DAY TRIAL</span>
         <div class="pName">Starter</div>
         <div class="pPrice">₹999<span style="font-size:11px;color:var(--inkFaint);">/mo</span></div>
         <div class="pNote">+ ₹1,999 setup · no dashboard</div>
       </div>
-      <div class="planOption selected" data-plan="growth" data-setup="2999" data-monthly="3499" data-trial="false">
+      <div class="planOption selected" data-plan="growth" data-setup="2999" data-monthly="3499" data-trial="false" role="radio" aria-checked="true" tabindex="0">
         <div class="pName">Growth</div>
         <div class="pPrice">₹3,499<span style="font-size:11px;color:var(--inkFaint);">/mo</span></div>
         <div class="pNote">+ ₹2,999 setup · dashboard included</div>
       </div>
-      <div class="planOption" data-plan="premium" data-setup="4999" data-monthly="6999" data-trial="false">
+      <div class="planOption" data-plan="premium" data-setup="4999" data-monthly="6999" data-trial="false" role="radio" aria-checked="false" tabindex="0">
         <div class="pName">Premium</div>
         <div class="pPrice">₹6,999<span style="font-size:11px;color:var(--inkFaint);">/mo</span></div>
         <div class="pNote">+ ₹4,999 setup · full CRM</div>
       </div>
     </div>
 
-    <div class="noWebsiteRow" id="noWebsiteRow">
+    <div class="noWebsiteRow" id="noWebsiteRow" role="checkbox" aria-checked="false" tabindex="0">
       <div class="checkbox" id="noWebsiteCheckbox"></div>
       <div class="label"><b>I don't have a website</b> — add a hosted landing page (+₹2,999 one-time)<span>Skip this if the chatbot will go on your existing site — that's free on every plan.</span></div>
     </div>
 
     <div class="formCard">
       <label for="fullName">Full name</label>
-      <input id="fullName" type="text" placeholder="Your name" />
+      <input id="fullName" type="text" placeholder="Your name" autocomplete="name" />
       <label for="businessName">Business name</label>
-      <input id="businessName" type="text" placeholder="Your business" />
+      <input id="businessName" type="text" placeholder="Your business" autocomplete="organization" />
       <label for="email">Email</label>
-      <input id="email" type="email" placeholder="you@business.com" />
+      <input id="email" type="email" placeholder="you@business.com" autocomplete="email" />
       <label for="phone">Phone (WhatsApp)</label>
-      <input id="phone" type="tel" placeholder="+91 " />
+      <input id="phone" type="tel" placeholder="+91 " autocomplete="tel" />
       <button class="payBtn" id="payBtn">Pay setup fee &amp; start subscription</button>
       <div class="trustNote">🔒 Payments processed securely via Razorpay · Cancel anytime · <a href="privacy.html">Privacy Policy</a></div>
     </div>
   </div>
 
-  <div class="summaryCard">
+  <aside class="summaryCard" aria-label="Order summary">
     <h3>Order summary</h3>
     <div class="sumRow"><span>Plan</span><span id="sumPlan">Growth</span></div>
     <div class="sumRow" id="sumWebsiteRow" style="display:none"><span>Landing page (no website)</span><span>₹2,999</span></div>
@@ -150,8 +190,10 @@
     </ul>
     <div class="dashNote" id="dashNote">Dashboard access included with this plan.</div>
     <div class="badgeRow" id="badgeRow"><span>NO LOCK-IN</span><span>FOUNDING RATE</span></div>
-  </div>
-</div>
+  </aside>
+</main>
+
+<footer class="siteFooter"><a href="index.html">Home</a> · <a href="privacy.html">Privacy Policy</a> · AssistQ, a SonQAI Technologies product</footer>
 
 <script>
 /* ============================================================
@@ -172,7 +214,22 @@
    Razorpay's `start_at` ~15 days out for Starter so the first
    recurring charge is deferred; Growth and Premium should NOT set
    start_at, so they bill the first cycle immediately alongside setup.
+
+   PERFORMANCE: the Razorpay checkout.js SDK (~140KB) now loads only
+   when the person actually clicks "Pay", not on every page load.
    ============================================================ */
+
+let razorpayLoaded = false;
+function loadRazorpaySdk() {
+  return new Promise((resolve, reject) => {
+    if (razorpayLoaded && window.Razorpay) return resolve();
+    const s = document.createElement('script');
+    s.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    s.onload = () => { razorpayLoaded = true; resolve(); };
+    s.onerror = () => reject(new Error('Could not load payment SDK'));
+    document.head.appendChild(s);
+  });
+}
 
 const plans = document.querySelectorAll(".planOption");
 const noWebsiteRow = document.getElementById("noWebsiteRow");
@@ -191,22 +248,29 @@ const INCLUDED = {
 const urlPlan = new URLSearchParams(window.location.search).get("plan");
 if (urlPlan) {
   const match = document.querySelector('.planOption[data-plan="' + urlPlan + '"]');
-  if (match) { plans.forEach(p => p.classList.remove("selected")); match.classList.add("selected"); selectedPlan = match; }
+  if (match) { plans.forEach(p => { p.classList.remove("selected"); p.setAttribute('aria-checked','false'); }); match.classList.add("selected"); match.setAttribute('aria-checked','true'); selectedPlan = match; }
 }
 
-plans.forEach(p => p.addEventListener("click", () => {
-  plans.forEach(x => x.classList.remove("selected"));
-  p.classList.add("selected");
+function selectPlan(p) {
+  plans.forEach(x => { x.classList.remove("selected"); x.setAttribute('aria-checked','false'); });
+  p.classList.add("selected"); p.setAttribute('aria-checked','true');
   selectedPlan = p;
   updateSummary();
-}));
+}
+plans.forEach(p => {
+  p.addEventListener("click", () => selectPlan(p));
+  p.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); selectPlan(p); } });
+});
 
-noWebsiteRow.addEventListener("click", () => {
+function toggleNoWebsite() {
   noWebsite = !noWebsite;
   noWebsiteRow.classList.toggle("checked", noWebsite);
+  noWebsiteRow.setAttribute('aria-checked', noWebsite ? 'true' : 'false');
   noWebsiteCheckbox.textContent = noWebsite ? "✓" : "";
   updateSummary();
-});
+}
+noWebsiteRow.addEventListener("click", toggleNoWebsite);
+noWebsiteRow.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); toggleNoWebsite(); } });
 
 function updateSummary() {
   const plan = selectedPlan.dataset.plan;
@@ -250,6 +314,8 @@ document.getElementById("payBtn").addEventListener("click", async () => {
   payBtn.textContent = "Preparing checkout...";
 
   try {
+    await loadRazorpaySdk();
+
     // STEP 1 — ask YOUR backend to create a Razorpay subscription and
     // return { subscription_id, key_id }. Do this server-side so your
     // Key Secret never touches the browser. Replace this URL with your

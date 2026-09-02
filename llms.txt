@@ -1,0 +1,19 @@
+# AssistQ
+
+> AssistQ is an AI-powered lead-qualification chatbot and CRM dashboard for small and mid-sized local businesses (real estate, clinics, salons, home services, consultants, coaching). Built and operated by SonQAI Technologies.
+
+AssistQ engages every website visitor the moment they land, has a real qualifying conversation (budget, timeline, requirement), scores the resulting lead, and delivers only the qualified leads to the business by email and WhatsApp — 24/7. Setup is typically live within 48 hours.
+
+## Plans
+- Starter (₹999/mo + ₹1,999 setup): chatbot only, no dashboard, 15-day free trial.
+- Growth (₹3,499/mo + ₹2,999 setup): chatbot + full dashboard (SEO audit, keyword tracking, UTM analytics, sales pipeline, EMI calculator).
+- Premium (₹6,999/mo + ₹4,999 setup): everything in Growth plus team management, automation, WhatsApp Cloud API, commission tracking, RERA compliance checker.
+
+## Key pages
+- [Homepage](https://www.assistq.in/): product overview, live chatbot demo, pricing, FAQ.
+- [Subscribe](https://www.assistq.in/payment.html): plan selection and checkout.
+- [Privacy Policy](https://www.assistq.in/privacy.html): data collection and handling practices.
+
+## Contact
+Email: assistq1@gmail.com
+Phone: +91 84462 42738

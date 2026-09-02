@@ -3,10 +3,33 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>AssistQ — Privacy Policy</title>
+<title>Privacy Policy — AssistQ</title>
+<meta name="description" content="How AssistQ and SonQAI Technologies collect, use, and protect information from website visitors, business clients, and prospective clients." />
+<link rel="canonical" href="https://www.assistq.in/privacy.html" />
+<meta name="robots" content="index, follow" />
+<meta name="theme-color" content="#0a0906" />
+<link rel="icon" href="favicon.svg" type="image/svg+xml" />
+<link rel="apple-touch-icon" href="apple-touch-icon.png" />
+<link rel="manifest" href="site.webmanifest" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="AssistQ" />
+<meta property="og:title" content="Privacy Policy — AssistQ" />
+<meta property="og:description" content="How AssistQ collects, uses, and protects information." />
+<meta property="og:url" content="https://www.assistq.in/privacy.html" />
+<meta name="twitter:card" content="summary" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://www.assistq.in/" },
+    { "@type": "ListItem", "position": 2, "name": "Privacy Policy", "item": "https://www.assistq.in/privacy.html" }
+  ]
+}
+</script>
 <style>
   :root {
     --bg: #0a0906; --card: rgba(255,255,255,0.035); --cardBorder: rgba(255,255,255,0.08);
@@ -18,13 +41,21 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: var(--sans); background: var(--bg); color: var(--ink); line-height: 1.7; }
   a { color: var(--gold); }
-  nav { padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid var(--cardBorder); position: sticky; top:0; background: rgba(10,9,6,0.85); backdrop-filter: blur(12px); }
+  :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+  nav { padding: 20px 32px; display:flex; align-items:center; justify-content:space-between; border-bottom: 1px solid var(--cardBorder); position: sticky; top:0; background: rgba(10,9,6,0.85); backdrop-filter: blur(12px); z-index: 10; }
   .navBrand { font-family: var(--serif); font-weight:600; font-size:20px; }
   .navBrand span { color: var(--gold); }
   .backLink { font-family: var(--mono); font-size: 12.5px; color: var(--inkMuted); text-decoration: none; }
   .backLink:hover { color: var(--gold); }
 
-  .wrap { max-width: 760px; margin: 0 auto; padding: 60px 28px 100px; }
+  .breadcrumbBar { max-width: 760px; margin: 0 auto; padding: 18px 28px 0; }
+  .breadcrumbBar ol { list-style:none; display:flex; flex-wrap:wrap; gap:6px; font-family: var(--mono); font-size: 11.5px; color: var(--inkFaint); }
+  .breadcrumbBar a { color: var(--inkMuted); text-decoration:none; }
+  .breadcrumbBar a:hover { color: var(--gold); }
+  .breadcrumbBar li[aria-current] { color: var(--gold); }
+  .breadcrumbBar li:not(:last-child)::after { content:"/"; margin-left:6px; color: var(--inkFaint); }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 40px 28px 100px; }
   .eyebrow { font-family: var(--mono); font-size: 11.5px; color: var(--gold); text-transform:uppercase; letter-spacing:1.4px; margin-bottom:14px; }
   h1 { font-family: var(--serif); font-weight:600; font-size: 34px; letter-spacing:-0.6px; margin-bottom: 10px; }
   .updated { font-size: 12.5px; color: var(--inkFaint); font-family: var(--mono); margin-bottom: 40px; }
@@ -50,22 +81,31 @@
   td { color: var(--inkMuted); }
   .noteBox { background: var(--goldSoft); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; font-size: 13px; color: var(--goldBright); margin-bottom: 14px; }
 
-  footer.credit { text-align: center; padding: 22px; font-size: 11px; color: var(--inkFaint); background: var(--dark); font-family: var(--mono); letter-spacing: .3px; margin-top: 60px; }
+  .siteFooter { text-align: center; padding: 22px; font-size: 11px; color: var(--inkFaint); background: var(--dark); font-family: var(--mono); letter-spacing: .3px; margin-top: 60px; }
+  .siteFooter a { color: var(--inkMuted); }
+  .siteFooter a:hover { color: var(--gold); }
 </style>
 </head>
 <body>
 
-<nav>
+<nav aria-label="Primary">
   <div class="navBrand">Assist<span>Q</span></div>
   <a class="backLink" href="index.html">← Back to site</a>
 </nav>
 
-<div class="wrap">
+<div class="breadcrumbBar" aria-label="Breadcrumb">
+  <ol>
+    <li><a href="index.html">Home</a></li>
+    <li aria-current="page">Privacy Policy</li>
+  </ol>
+</div>
+
+<main class="wrap">
   <div class="eyebrow">Legal</div>
   <h1>Privacy Policy</h1>
-  <div class="updated">Last updated: 29 August 2026</div>
+  <div class="updated">Last updated: 2 September 2026</div>
 
-  <div class="toc">
+  <nav class="toc" aria-label="Sections on this page">
     <div>On this page</div>
     <ol>
       <li><a href="#who-we-are">Who we are</a></li>
@@ -80,7 +120,7 @@
       <li><a href="#changes">Changes to this policy</a></li>
       <li><a href="#contact">Contact us</a></li>
     </ol>
-  </div>
+  </nav>
 
   <section id="who-we-are">
     <h2>1. Who we are</h2>
@@ -126,7 +166,8 @@
       <li><strong>Razorpay</strong> — processes subscription payments. Razorpay's own privacy policy governs how they handle payment details.</li>
       <li><strong>Google (Search Console, Analytics, Gmail)</strong> — only if a business client explicitly connects their Google account, to power SEO/analytics features and email report delivery.</li>
       <li><strong>Meta / WhatsApp Cloud API</strong> — used to deliver WhatsApp notifications and template messages on behalf of business clients who enable this feature.</li>
-      <li><strong>Our hosting and database providers</strong> (currently Railway and its underlying infrastructure) — store the data described above securely on our behalf.</li>
+      <li><strong>Railway</strong> — hosts our dashboard application and database, where lead, conversation, and business-client data is stored.</li>
+      <li><strong>GitHub Pages</strong> — hosts our public marketing website (this site). Like any web host, it processes standard request data (e.g. IP address, browser type) to serve pages; it does not receive chatbot conversation or lead data.</li>
     </ul>
     <p>We do not share personal information with advertisers, and we do not sell personal information.</p>
   </section>
@@ -165,11 +206,11 @@
   <section id="contact">
     <h2>11. Contact us</h2>
     <p>Questions about this policy, or requests regarding your personal information, can be sent to:</p>
-    <p><strong>Email:</strong> hello@assistq.in<br><strong>Phone:</strong> +91 00000 00000</p>
+    <p><strong>Email:</strong> <a href="mailto:assistq1@gmail.com">assistq1@gmail.com</a><br><strong>Phone:</strong> <a href="tel:+918446242738">+91 84462 42738</a></p>
   </section>
-</div>
+</main>
 
-<footer class="credit">AssistQ — a SonQAI Technologies product</footer>
+<footer class="siteFooter"><a href="index.html">Home</a> · <a href="index.html#pricingSection">Pricing</a> · <a href="payment.html">Subscribe</a> · <a href="sitemap.xml">Sitemap</a> · AssistQ — a SonQAI Technologies product</footer>
 
 </body>
 </html>

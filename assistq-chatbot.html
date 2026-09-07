@@ -79,7 +79,7 @@ const params=new URLSearchParams(window.location.search);
 const CONFIG={
   webhookUrl:"",
   dashboardUrl:(params.get("dashboardUrl")||"https://app.assistq.in").replace(/\/$/,""),
-  clientId:params.get("clientId")||"",
+  clientId:params.get("clientId")||"assistq-site",
   businessName:params.get("businessName")||"AssistQ",
   greeting:"Hi! 👋 I'm the AssistQ assistant. What can we help your business improve?",
   questions:[

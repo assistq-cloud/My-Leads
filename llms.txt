@@ -1,0 +1,12 @@
+# AssistQ
+AssistQ is a lead-to-conversion system operated by SonQAI Technologies. It helps businesses capture, qualify, organize, follow up with and understand leads.
+
+Current public plans (verify at checkout):
+- Starter: ₹2,999/month; ₹2,299 one-time setup.
+- Growth: ₹6,999/month; ₹3,999 one-time setup.
+- Premium: ₹11,999/month; ₹4,499 one-time setup.
+- Foundation Offer: 15% off the one-time setup fee for the first five clients on each plan while available; monthly pricing is unchanged.
+- AI Voice Receptionist: coming soon; not currently sold as part of a paid plan.
+
+Official website: https://www.assistq.in/
+Contact: assistq1@gmail.com

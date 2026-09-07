@@ -77,7 +77,7 @@ const params=new URLSearchParams(window.location.search);
   embed explicitly supplies another dashboardUrl.
 */
 const CONFIG={
-  webhookUrl:"",
+  webhookUrl:"https://script.google.com/macros/s/AKfycbwVBEqcBk8Uo8RhB-AOn6MvC_p6xtXBYlHwDus3jodH3DywbfzilQVnRIfRoC_7PuXm/exec",
   dashboardUrl:(params.get("dashboardUrl")||"https://app.assistq.in").replace(/\/$/,""),
   clientId:params.get("clientId")||"assistq-site",
   businessName:params.get("businessName")||"AssistQ",
